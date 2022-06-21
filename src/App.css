@@ -8,8 +8,26 @@ body{
     text-gray-400
 }
 
+.container{
+    @apply
+    p-4
+}
+
 .inputTitle{
     @apply
     block
     my-2
 }
+
+.genericSelectorShort{
+
+}
+
+.genericSelectorShortSideBySide{
+}
+
+.secondSideBySideSelector{
+    @apply
+    ml-2
+}
+
