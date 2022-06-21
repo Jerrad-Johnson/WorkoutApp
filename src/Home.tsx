@@ -4,9 +4,9 @@ let cc = console.log;
 function Home(){
 
     const [numberOfExercisesState, setNumberOfExercisesState] = useState<number>(4);
-    const [defaultNumberOfExercises, setDefaultNumberOfExercises] = useState<number>(4);
+    const [defaultNumberOfExercisesState, setDefaultNumberOfExercisesState] = useState<number>(4);
     const [exerciseTypesState, setExerciseTypesState] = useState<string[]>(["Chest Press"]);
-    const [defaultRepCount, setDefaultRepCount] = useState<number>(5);
+    const [defaultRepCountState, setDefaultRepCountState] = useState<number>(5);
 
     let date: string = todaysDateForHTMLCalendar()
 
@@ -16,49 +16,65 @@ function Home(){
             <span className={"inputTitle"}>New Entry Date</span>
             <input type={"date"} defaultValue={date}></input>
 
-            <span className={"inputTitle"}>Number of Exercises</span>
-            <select defaultValue={defaultNumberOfExercises} className={"genericSelectorShort"}>
-                <NumberOfExercises
-                    numberOfExercisesState = {numberOfExercisesState}
-                />
-            </select>
+            <NumberOfExercises
+                numberOfExercisesState = {numberOfExercisesState}
+                defaultNumberOfExercisesState = {defaultNumberOfExercisesState}
+                defaultRepCountState = {defaultRepCountState}
+            />
 
+            <ExercisesComponent
+                numberOfExercisesState = {numberOfExercisesState}
+                defaultRepCountState = {defaultRepCountState}
+                exerciseTypesState = {exerciseTypesState}
+                defaultNumberOfExercisesState = {defaultNumberOfExercisesState}
+            />
             <br />
-            <span className={"inputTitleSideBySide"}>Exercise </span>
-            <span className={"inputTitleSideBySide"}>Reps </span>
-            <br />
-            <select className={"genericSelectorLongSideBySide"}>
-                <TypesOfExercises
-                    exerciseTypesState = {exerciseTypesState}
-                />
-            </select>
-
-            <select defaultValue={defaultRepCount} className={"genericSelectorShortSideBySide secondSideBySideSelector"}>
-                <RepCount/>
-            </select>
-
-
-
-
         </form>
       </div>
     );
 }
 
-function NumberOfExercises({numberOfExercisesState}: {numberOfExercisesState: number}){
-    let numberOfExercisesAsArray: number[] = [];
+function ExercisesComponent({numberOfExercisesState, defaultRepCountState, exerciseTypesState, defaultNumberOfExercisesState}:
+                                {numberOfExercisesState: number, defaultRepCountState: number, exerciseTypesState: string[],
+                                defaultNumberOfExercisesState: number}){
+    let exercisesComponents: JSX.Element[] = Array.from({length: numberOfExercisesState}, (_v, k) => {
+        return (
+            <div key={k}>
+                <span className={"inputTitleSideBySide"}>Exercise -- </span>
+                <span className={"inputTitleSideBySide"}>Reps </span>
+                <br />
+                <select className={"genericSelectorLongSideBySide"}>
+                    <TypesOfExercises
+                        exerciseTypesState = {exerciseTypesState}
+                    />
+                </select>
 
-    for (let i = 0; i < numberOfExercisesState;){
-        numberOfExercisesAsArray[i] = ++i;
-    }
+                <select defaultValue={defaultRepCountState} className={"genericSelectorShortSideBySide secondSideBySideSelector"}>
+                    <RepCount/>
+                </select>
+            </div>
+        );
+    });
 
-    let exerciseOptionCount: JSX.Element[] = numberOfExercisesAsArray.map((e: number, k: number) => {
+return (<>{exercisesComponents}</>);
+
+}
+
+function NumberOfExercises({numberOfExercisesState, defaultNumberOfExercisesState, defaultRepCountState}:
+                           {numberOfExercisesState: number, defaultNumberOfExercisesState: number, defaultRepCountState: number}){
+    let exerciseOptionCount: JSX.Element[] = Array.from({length: numberOfExercisesState}, (_e, k) => {
        return (
-            <option key={k}>{e}</option>
+            <option key={k}>{k+1}</option>
        );
     });
 
-    return (<>{exerciseOptionCount}</>);
+    return (<>
+                <span className={"inputTitle"}>Number of Exercises in This Workout</span>
+                <select defaultValue={defaultNumberOfExercisesState} className={"genericSelectorShort"}>
+                    {exerciseOptionCount}
+                </select>
+            </>
+    );
 }
 
 function TypesOfExercises({exerciseTypesState}: {exerciseTypesState: string[]}){
