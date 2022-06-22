@@ -7,11 +7,16 @@ function Home(){
     const [exerciseTypesState, setExerciseTypesState] = useState<string[]>(["Please Choose"]);
     const [exercisesPresetState, setExercisesPresetState] = useState<string[]>([]);
     const [defaultRepCountState, setDefaultRepCountState] = useState<number>(5);
+    const [serverResponseState, setServerResponseState] = useState<string>("Awaiting response...");
 
     let date: string = todaysDateForHTMLCalendar()
 
     return(
       <div className={""}>
+        <TestingCors
+        serverResponseState = {serverResponseState}
+        />
+
         <form>
             <span className={"inputTitle"}>New Entry Date</span>
             <input type={"date"} defaultValue={date}></input>
@@ -22,6 +27,7 @@ function Home(){
                 setCurrentNumberOfExercisesState = {setCurrentNumberOfExercisesState}
                 defaultNumberOfExercisesState = {defaultNumberOfExercisesState}
             />
+
 
             <ExercisesComponent
                 currentNumberOfExercisesState = {currentNumberOfExercisesState}
@@ -114,6 +120,23 @@ function todaysDateForHTMLCalendar(){
     let yyyy: number = date.getFullYear()
 
     return (`${yyyy}-${MM}-${DD}`);
+}
+
+function TestingCors({serverResponseState}: {serverResponseState: string}){
+    let x: object = {
+        'lol':'idk'
+    }
+
+    fetch("http://localhost:80/php/test.php", {
+        method: 'POST',
+        mode: 'cors',
+        body: JSON.stringify(x),
+        headers: {
+        'Content-Type': 'application/json' }
+    }).then(response => response.json())
+      .then(data => cc(JSON.parse(data)));
+
+    return (<></>)
 }
 
 
