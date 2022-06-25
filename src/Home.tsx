@@ -8,6 +8,7 @@ function Home(){
     const [exercisesPresetState, setExercisesPresetState] = useState<string[]>([]);
     const [defaultRepCountState, setDefaultRepCountState] = useState<number>(5);
     const [serverResponseState, setServerResponseState] = useState<string>("Awaiting response...");
+    const [defaultWeightState, setDefaultWeightState] = useState<number[][]>([[150, 110, 150, 150], [120, 120, 120], [120, 120, 120], [120, 120, 120]]);
 
     let date: string = todaysDateForHTMLCalendar();
 
@@ -27,6 +28,7 @@ function Home(){
                 currentNumberOfExercisesState = {currentNumberOfExercisesState}
                 defaultRepCountState = {defaultRepCountState}
                 exerciseTypesState = {exerciseTypesState}
+                defaultWeightState = {defaultWeightState}
             />
             <br />
         </form>
@@ -34,9 +36,10 @@ function Home(){
     );
 }
 
-function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState, exerciseTypesState}:
+function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState, exerciseTypesState, defaultWeightState}:
                                 {currentNumberOfExercisesState: number, defaultRepCountState: number,
-                                    exerciseTypesState: string[]}){
+                                    exerciseTypesState: string[], defaultWeightState: number[][]}){
+
     let exercisesComponents: JSX.Element[] =
         Array.from({length: currentNumberOfExercisesState}, (_v, k) => {
         return (
@@ -50,6 +53,7 @@ function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState
                 />
                 <SetSelector
                     defaultRepCountState = {defaultRepCountState}
+                    defaultWeight = {defaultWeightState[k]}
                 />
 
             </div>
@@ -99,25 +103,32 @@ function TypesOfExercises({exerciseTypesState}: {exerciseTypesState: string[]}){
         )
 }
 
-function SetSelector({defaultRepCountState}: {defaultRepCountState: number}){
+function SetSelector({defaultRepCountState, defaultWeight}:
+                         {defaultRepCountState: number, defaultWeight: number[]}){
     const [setCountState, setSetCountState] = useState<number>(1);
+    const [defaultWeightState, setDefaultWeightState] = useState<number>(100);
+
     let maxSetCount: number[] = [];
-    let numberOfRepCountersForThisSet: number[] = [];
+    let numberOfCountersForThisSet: number[] = [];
 
     for (let i = 0; i < 12; i++){
         maxSetCount[i] = i+1;
     }
 
     for (let i = 0; i < setCountState; i++){
-        numberOfRepCountersForThisSet[i] = i+1;
+        numberOfCountersForThisSet[i] = i+1;
     }
 
-    cc(numberOfRepCountersForThisSet)
 
-    let repCountersForThisSet = numberOfRepCountersForThisSet.map((e, k) => {
+
+    let repCountersForThisSet = numberOfCountersForThisSet.map((e, k) => {
         return (
            <div key={k}>
                <RepSelector defaultRepCountState = {defaultRepCountState} />
+               <WeightInput
+                   defaultWeight = {defaultWeight[k]}
+                   defaultWeightState = {defaultWeightState}
+               />
            </div>
         );
     });
@@ -157,6 +168,15 @@ function RepSelector({defaultRepCountState}: {defaultRepCountState: number}){
             {repCountOptions}
         </select>
         );
+}
+
+function WeightInput({defaultWeight, defaultWeightState}: {defaultWeight: number, defaultWeightState: number}){
+    return (<>
+            <input type={"text"} defaultValue={defaultWeight || defaultWeightState}
+                onChange={(e)  => {
+                e.preventDefault();
+            }} />
+    </>)
 }
 
 function todaysDateForHTMLCalendar(){
