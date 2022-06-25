@@ -23,8 +23,6 @@ function Home(){
                 setCurrentNumberOfExercisesState = {setCurrentNumberOfExercisesState}
                 defaultNumberOfExercisesState = {defaultNumberOfExercisesState}
             />
-
-
             <ExercisesComponent
                 currentNumberOfExercisesState = {currentNumberOfExercisesState}
                 defaultRepCountState = {defaultRepCountState}
@@ -50,9 +48,10 @@ function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState
                 <TypesOfExercises
                     exerciseTypesState = {exerciseTypesState}
                 />
-                <RepCount
+                <SetSelector
                     defaultRepCountState = {defaultRepCountState}
                 />
+
             </div>
         );
     });
@@ -100,7 +99,46 @@ function TypesOfExercises({exerciseTypesState}: {exerciseTypesState: string[]}){
         )
 }
 
-function RepCount({defaultRepCountState}: {defaultRepCountState: number}){
+function SetSelector({defaultRepCountState}: {defaultRepCountState: number}){
+    const [setCountState, setSetCountState] = useState<number>(1);
+    let maxSetCount: number[] = [];
+    let numberOfRepCountersForThisSet: number[] = [];
+
+    for (let i = 0; i < 12; i++){
+        maxSetCount[i] = i+1;
+    }
+
+    for (let i = 0; i < setCountState; i++){
+        numberOfRepCountersForThisSet[i] = i+1;
+    }
+
+    cc(numberOfRepCountersForThisSet)
+
+    let repCountersForThisSet = numberOfRepCountersForThisSet.map((e, k) => {
+        return (
+           <div key={k}>
+               <RepSelector defaultRepCountState = {defaultRepCountState} />
+           </div>
+        );
+    });
+
+    let setCountOptions: JSX.Element[] = maxSetCount.map((e: number, k: number ) => {
+        return (
+            <option key={k}>{e}</option>
+        );
+    });
+
+    return (<>
+        <select onChange={(e) => {
+            e.preventDefault();
+            setSetCountState(+e.target.value);
+        }}>{setCountOptions}
+        </select>
+        {repCountersForThisSet}
+    </>);
+}
+
+function RepSelector({defaultRepCountState}: {defaultRepCountState: number}){
     let maxRepCount: number[] = [];
 
     for (let i = 0; i < 20; i++){
