@@ -62,6 +62,7 @@ function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState
                     defaultRepCountState = {defaultRepCountState}
                     priorSessionWeightState = {priorSessionWeightState[k]}
                     priorSessionRepsState = {priorSessionRepsState?.[k]}
+                    setPriorSessionRepsState = {setPriorSessionRepsState}
                 />
 
             </div>
@@ -111,12 +112,14 @@ function TypesOfExercises({exerciseTypesState}: {exerciseTypesState: string[]}){
         )
 }
 
-function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessionRepsState}:
+function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessionRepsState, setPriorSessionRepsState}:
                          {defaultRepCountState: number, priorSessionWeightState: number[],
-                             priorSessionRepsState: number[] | undefined}){
+                             priorSessionRepsState: number[] | undefined,
+                             setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>}){
 
     const [setCountState, setSetCountState] = useState<number>(1);
     const [defaultWeightState, setDefaultWeightState] = useState<number>(100);
+    const [intermediateRepsState, setIntermediateRepsState] = useState<number[] | undefined>(priorSessionRepsState || undefined);
 
     let maxSetCount: number[] = [];
     let numberOfCountersForThisSet: number[] = [];
@@ -127,16 +130,18 @@ function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessio
 
 
 
-    if (priorSessionRepsState !== undefined){
+    if (intermediateRepsState !== undefined){
 
-        for (let i = 0; i < priorSessionRepsState.length; i++){
+        for (let i = 0; i < intermediateRepsState.length; i++){
             numberOfCountersForThisSet[i] = i+1;
         }
 
         var repCountersForThisSet = numberOfCountersForThisSet.map((e, k) => {
             return (
                 <div key={k}>
-                    <RepSelector repCountState = {priorSessionRepsState[k]} />
+                    <RepSelector
+                        repCountState = {intermediateRepsState[k]}
+                    />
                     <WeightInput
                         priorSessionWeightState = {priorSessionWeightState[k]}
                         defaultWeightState = {defaultWeightState}
@@ -174,12 +179,28 @@ function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessio
     return (<>
         <select onChange={(e) => {
             e.preventDefault();
+            if (intermediateRepsState !== undefined) {
+                handleSetPriorRepCountState(setIntermediateRepsState, +e.target.value, intermediateRepsState,
+                    defaultWeightState);
 
-            setSetCountState(+e.target.value);
+            } else {
+                setSetCountState(+e.target.value);
+            }
         }}>{setCountOptions}
         </select>
         {repCountersForThisSet}
     </>);
+}
+
+function handleSetPriorRepCountState(setIntermediateRepsState: Dispatch<SetStateAction<number[] | undefined>>,
+                                     newCount: number, intermediateRepsState: number[], defaultWeightState: number){
+    let newRepCounts: number[] = [];
+
+    for (let i = 0; i < newCount; i++){
+        newRepCounts[i] = intermediateRepsState[i] || defaultWeightState;
+    }
+
+    setIntermediateRepsState(newRepCounts);
 }
 
 function RepSelector({repCountState}: {repCountState: number}){
