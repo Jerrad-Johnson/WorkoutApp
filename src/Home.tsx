@@ -47,16 +47,12 @@ function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState
                 <span className={"inputTitleSideBySide"}>Sets -- </span>
                 <span className={"inputTitleSideBySide"}>Reps </span>
                 <br />
-                <select className={"genericSelectorLongSideBySide"}>
-                    <TypesOfExercises
-                        exerciseTypesState = {exerciseTypesState}
-                    />
-                </select>
-
-                <select defaultValue={defaultRepCountState} className={"genericSelectorShortSideBySide " +
-                    "secondSideBySideSelector"}>
-                    <RepCount/>
-                </select>
+                <TypesOfExercises
+                    exerciseTypesState = {exerciseTypesState}
+                />
+                <RepCount
+                    defaultRepCountState = {defaultRepCountState}
+                />
             </div>
         );
     });
@@ -97,10 +93,14 @@ function TypesOfExercises({exerciseTypesState}: {exerciseTypesState: string[]}){
         );
     });
 
-    return (<>{listOfExercises}</>)
+    return (
+        <select className={"genericSelectorLongSideBySide"}>
+            {listOfExercises}
+        </select>
+        )
 }
 
-function RepCount(){
+function RepCount({defaultRepCountState}: {defaultRepCountState: number}){
     let maxRepCount: number[] = [];
 
     for (let i = 0; i < 20; i++){
@@ -113,7 +113,12 @@ function RepCount(){
         );
     });
 
-    return (<>{repCountOptions}</>);
+    return (
+        <select defaultValue={defaultRepCountState} className={"genericSelectorShortSideBySide " +
+            "secondSideBySideSelector"}>
+            {repCountOptions}
+        </select>
+        );
 }
 
 function todaysDateForHTMLCalendar(){
