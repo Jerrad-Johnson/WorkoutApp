@@ -8,7 +8,7 @@ function Home(){
     const [exercisesPresetState, setExercisesPresetState] = useState<string[]>([]);
     const [defaultRepCountState, setDefaultRepCountState] = useState<number>(5);
     const [serverResponseState, setServerResponseState] = useState<string>("Awaiting response...");
-    const [defaultWeightState, setDefaultWeightState] = useState<number[][]>([[150, 110, 150, 150], [120, 120, 120], [120, 120, 120], [120, 120, 120]]);
+    const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][]>([[150, 110, 150, 150], [120, 120, 120], [120, 120, 120], [120, 120, 120]]);
 
     let date: string = todaysDateForHTMLCalendar();
 
@@ -28,7 +28,7 @@ function Home(){
                 currentNumberOfExercisesState = {currentNumberOfExercisesState}
                 defaultRepCountState = {defaultRepCountState}
                 exerciseTypesState = {exerciseTypesState}
-                defaultWeightState = {defaultWeightState}
+                priorSessionWeightState = {priorSessionWeightState}
             />
             <br />
         </form>
@@ -36,9 +36,9 @@ function Home(){
     );
 }
 
-function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState, exerciseTypesState, defaultWeightState}:
+function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState, exerciseTypesState, priorSessionWeightState}:
                                 {currentNumberOfExercisesState: number, defaultRepCountState: number,
-                                    exerciseTypesState: string[], defaultWeightState: number[][]}){
+                                    exerciseTypesState: string[], priorSessionWeightState: number[][]}){
 
     let exercisesComponents: JSX.Element[] =
         Array.from({length: currentNumberOfExercisesState}, (_v, k) => {
@@ -53,7 +53,7 @@ function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState
                 />
                 <SetSelector
                     defaultRepCountState = {defaultRepCountState}
-                    defaultWeight = {defaultWeightState[k]}
+                    priorSessionWeightState = {priorSessionWeightState[k]}
                 />
 
             </div>
@@ -103,8 +103,8 @@ function TypesOfExercises({exerciseTypesState}: {exerciseTypesState: string[]}){
         )
 }
 
-function SetSelector({defaultRepCountState, defaultWeight}:
-                         {defaultRepCountState: number, defaultWeight: number[]}){
+function SetSelector({defaultRepCountState, priorSessionWeightState}:
+                         {defaultRepCountState: number, priorSessionWeightState: number[]}){
     const [setCountState, setSetCountState] = useState<number>(1);
     const [defaultWeightState, setDefaultWeightState] = useState<number>(100);
 
@@ -126,7 +126,7 @@ function SetSelector({defaultRepCountState, defaultWeight}:
            <div key={k}>
                <RepSelector defaultRepCountState = {defaultRepCountState} />
                <WeightInput
-                   defaultWeight = {defaultWeight[k]}
+                   priorSessionWeightState = {priorSessionWeightState[k]}
                    defaultWeightState = {defaultWeightState}
                />
            </div>
@@ -170,9 +170,9 @@ function RepSelector({defaultRepCountState}: {defaultRepCountState: number}){
         );
 }
 
-function WeightInput({defaultWeight, defaultWeightState}: {defaultWeight: number, defaultWeightState: number}){
+function WeightInput({priorSessionWeightState, defaultWeightState}: {priorSessionWeightState: number, defaultWeightState: number}){
     return (<>
-            <input type={"text"} defaultValue={defaultWeight || defaultWeightState}
+            <input type={"text"} defaultValue={priorSessionWeightState || defaultWeightState}
                 onChange={(e)  => {
                 e.preventDefault();
             }} />
