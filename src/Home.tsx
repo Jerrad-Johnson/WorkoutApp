@@ -10,14 +10,9 @@ function Home(){
     const [serverResponseState, setServerResponseState] = useState<string>("Awaiting response...");
 
     let date: string = todaysDateForHTMLCalendar();
-    TestingLogin();
 
     return(
       <div className={""}>
-        <TestingCors
-        serverResponseState = {serverResponseState}
-        />
-
         <form>
             <span className={"inputTitle"}>New Entry Date</span>
             <input type={"date"} defaultValue={date}></input>
@@ -42,11 +37,14 @@ function Home(){
 }
 
 function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState, exerciseTypesState}:
-                                {currentNumberOfExercisesState: number, defaultRepCountState: number, exerciseTypesState: string[]}){
-    let exercisesComponents: JSX.Element[] = Array.from({length: currentNumberOfExercisesState}, (_v, k) => {
+                                {currentNumberOfExercisesState: number, defaultRepCountState: number,
+                                    exerciseTypesState: string[]}){
+    let exercisesComponents: JSX.Element[] =
+        Array.from({length: currentNumberOfExercisesState}, (_v, k) => {
         return (
             <div key={k}>
                 <span className={"inputTitleSideBySide"}>Exercise -- </span>
+                <span className={"inputTitleSideBySide"}>Sets -- </span>
                 <span className={"inputTitleSideBySide"}>Reps </span>
                 <br />
                 <select className={"genericSelectorLongSideBySide"}>
@@ -55,7 +53,8 @@ function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState
                     />
                 </select>
 
-                <select defaultValue={defaultRepCountState} className={"genericSelectorShortSideBySide secondSideBySideSelector"}>
+                <select defaultValue={defaultRepCountState} className={"genericSelectorShortSideBySide " +
+                    "secondSideBySideSelector"}>
                     <RepCount/>
                 </select>
             </div>
@@ -66,8 +65,12 @@ return (<>{exercisesComponents}</>);
 
 }
 
-function NumberOfExercises({currentNumberOfExercisesState, defaultRepCountState, setCurrentNumberOfExercisesState, defaultNumberOfExercisesState}:
-                           {currentNumberOfExercisesState: number, defaultRepCountState: number, setCurrentNumberOfExercisesState: Dispatch<SetStateAction<number>>, defaultNumberOfExercisesState: number}){
+function NumberOfExercises({currentNumberOfExercisesState, defaultRepCountState, setCurrentNumberOfExercisesState,
+                               defaultNumberOfExercisesState}:
+                           {currentNumberOfExercisesState: number,
+                               defaultRepCountState: number,
+                               setCurrentNumberOfExercisesState: Dispatch<SetStateAction<number>>,
+                               defaultNumberOfExercisesState: number}){
     let exerciseOptionCount: JSX.Element[] = Array.from({length: 12}, (_e, k) => {
        return (
             <option key={k}>{k+1}</option>
@@ -76,7 +79,8 @@ function NumberOfExercises({currentNumberOfExercisesState, defaultRepCountState,
 
     return (<>
                 <span className={"inputTitle"}>Number of Exercises in This Workout</span>
-                <select defaultValue={defaultNumberOfExercisesState} className={"genericSelectorShort"} onChange={(e) => {
+                <select defaultValue={defaultNumberOfExercisesState} className={"genericSelectorShort"}
+                        onChange={(e) => {
                     e.preventDefault();
                     setCurrentNumberOfExercisesState(+e.target.value);
                 }}>
@@ -123,7 +127,7 @@ function todaysDateForHTMLCalendar(){
     return (`${yyyy}-${MM}-${DD}`);
 }
 
-function TestingLogin() {
+function login() {
     let entry: object = {
         "password": "abc",
         "username": "elseif",
@@ -138,18 +142,16 @@ function TestingLogin() {
             'Content-Type': 'application/json' }
     }).then(response => response.json())
         .then(data => cc(data));
-
-    return (<></>)
 }
 
-function TestingCors({serverResponseState}: {serverResponseState: string}){
+function submitSession({serverResponseState}: {serverResponseState: string}) {
     let entries: object[] = [{
         "date": "2022-02-02",
         "title": "Upper Body",
         "exercise": "Chest Press",
         "weightLifted": [150, 150, 150, 150],
         "reps": [10, 10, 10, 10],
-    },{
+    }, {
         "date": "2022-02-02",
         "title": "Upper Body",
         "exercise": "Bicep Curl",
@@ -163,11 +165,14 @@ function TestingCors({serverResponseState}: {serverResponseState: string}){
         body: JSON.stringify(entries),
         credentials: "include",
         headers: {
-        'Content-Type': 'application/json' }
+            'Content-Type': 'application/json'
+        }
     }).then(response => response.json())
-      .then(data => cc(data));
+        .then(data => testMe(data));
 
-    return (<></>)
+    function testMe(data: []) {
+        cc(data);
+    }
 }
 
 
