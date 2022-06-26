@@ -31,3 +31,7 @@ body{
     ml-2
 }
 
+.exerciseSelector{
+    @apply
+    mx-4
+}
