@@ -4,7 +4,7 @@ let cc = console.log;
 function Home(){
     //const [exercisesPresetState, setExercisesPresetState] = useState<string[]>([]);
     const [currentNumberOfExercisesState, setCurrentNumberOfExercisesState] = useState<number>(2);
-    const [exerciseTypesState, setExerciseTypesState] = useState<string[]>(["Please Choose"]);
+    const [exerciseTypesState, setExerciseTypesState] = useState<string[]>([]);
     const [defaultRepCountState, setDefaultRepCountState] = useState<number>(5);
     const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][] | undefined>(/*[[100, 200, 250], [109, 110, 111, 150]]*/);
     const [priorSessionRepsState, setPriorSessionRepsState] = useState<number[][] | undefined>(/*[[5, 2, 2, 2], [5, 7, 7, 7], [1, 1, 2]]*/);
@@ -154,20 +154,35 @@ return (<>{exercisesComponents}</>);
 }
 
 function TypesOfExercises({exerciseTypesState}: {exerciseTypesState: string[]}){
-    let listOfExercises: JSX.Element[] = exerciseTypesState.map((e: string, k: number) => {
-        return (
-            <option key={k}>{e}</option>
-        );
-    });
+    let listOfExercises: JSX.Element[] = [];
+    let exercisesSelector: JSX.Element[] = [];
 
-    return (
-        <div>
-            <span className={"inputTitleSideBySide"}>Exercise  </span>
-            <select className={"genericSelectorLongSideBySide exerciseSelector"}>
-                {listOfExercises}
-            </select>
-        </div>
+    if (exerciseTypesState.length > 0) {
+        listOfExercises = exerciseTypesState.map((e: string, k: number) => {
+            return (
+                <option key={k}>{e}</option>
+            );
+        });
+    }
+
+    if (listOfExercises.length > 0){
+        exercisesSelector = [0].map((e) => {
+            return (
+                <div>
+                    <span className={"inputTitleSideBySide"}>Exercise  </span>
+                    <select className={"genericSelectorLongSideBySide exerciseSelector"}>
+                        {listOfExercises}
+                    </select>
+                </div>
+            );
+        });
+    } else {
+        return (
+            <input type={"text"} defaultValue={"Exercise Name"} className={"addAnExercise"}></input>
         );
+    }
+
+    return ( <>{exercisesSelector.length > 0 && exercisesSelector }</> );
 }
 
 function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessionRepsState,
