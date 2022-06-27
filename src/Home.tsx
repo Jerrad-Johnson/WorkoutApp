@@ -7,9 +7,9 @@ function Home(){
     const [currentNumberOfExercisesState, setCurrentNumberOfExercisesState] = useState<number>(2);
     const [exerciseTypesState, setExerciseTypesState] = useState<string[]>(["Please Choose"]);
     const [defaultRepCountState, setDefaultRepCountState] = useState<number>(5);
-    const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][] | undefined>(undefined);
+    const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][] | undefined>(/*[[100, 200, 250], [109, 110, 111, 150]]*/);
     const [priorSessionRepsState, setPriorSessionRepsState] = useState<number[][] | undefined>(/*[[5, 2, 2, 2], [5, 7, 7, 7], [1, 1, 2]]*/);
-    const [priorSessionTitle, setPriorSessionTitle] = useState<string | undefined>("Session Title");
+    const [priorSessionTitle, setPriorSessionTitle] = useState<string | undefined>();
     const [setCountState, setSetCountState] = useState<number[]>([2, 2]);
     const [userDefinedDefaultSetsPerWorkoutState, setUserDefinedDefaultSetsPerWorkoutState] = useState<number>(2);
     const [defaultWeightState, setDefaultWeightState] = useState<number>(100);
@@ -20,7 +20,7 @@ function Home(){
       <div className={""}>
         <br />
         <form>
-            <input type={"text"} defaultValue={priorSessionTitle} className={"sessionTitle"}></input>
+            <input type={"text"} defaultValue={priorSessionTitle || "Session Title"} className={"sessionTitle"}></input>
             <span className={"inputTitle"}>New Entry Date</span>
             <input type={"date"} defaultValue={date} className={"sessionDate"}></input>
 
@@ -349,6 +349,5 @@ function submitSession({serverResponseState}: {serverResponseState: string}) {
         cc(data);
     }
 }
-
 
 export default Home;
