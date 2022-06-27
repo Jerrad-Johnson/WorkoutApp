@@ -4,15 +4,15 @@ let cc = console.log;
 function Home(){
     //const [priorSessionNumberOfExercisesState, setPriorSessionNumberOfExercisesState] = useState<number>(7);
     //const [exercisesPresetState, setExercisesPresetState] = useState<string[]>([]);
-    const [currentNumberOfExercisesState, setCurrentNumberOfExercisesState] = useState<number>(1);
+    const [currentNumberOfExercisesState, setCurrentNumberOfExercisesState] = useState<number>(2);
     const [exerciseTypesState, setExerciseTypesState] = useState<string[]>(["Please Choose"]);
     const [defaultRepCountState, setDefaultRepCountState] = useState<number>(5);
     const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][] | undefined>(undefined);
-    const [priorSessionRepsState, setPriorSessionRepsState] = useState<number[][] | undefined>(undefined);
+    const [priorSessionRepsState, setPriorSessionRepsState] = useState<number[][] | undefined>();
     const [priorSessionTitle, setPriorSessionTitle] = useState<string | undefined>("Session Title");
-    const [setCountState, setSetCountState] = useState<number[]>([3, 4]);
+    const [setCountState, setSetCountState] = useState<number[]>([2, 2]);
     const [userDefinedDefaultSetsPerWorkoutState, setUserDefinedDefaultSetsPerWorkoutState] = useState<number>(2);
-
+    const [defaultWeightState, setDefaultWeightState] = useState<number>(100);
 
     let date: string = todaysDateForHTMLCalendar();
 
@@ -42,6 +42,7 @@ function Home(){
                 setPriorSessionRepsState = {setPriorSessionRepsState}
                 setCountState = {setCountState}
                 setSetCountState = {setSetCountState}
+                defaultWeightState = {defaultWeightState}
             />
         </form>
       </div>
@@ -50,14 +51,15 @@ function Home(){
 
 function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState, exerciseTypesState,
                                 priorSessionWeightState, priorSessionRepsState, setPriorSessionRepsState,
-                                setCountState, setSetCountState}:
+                                setCountState, setSetCountState, defaultWeightState}:
                                 {currentNumberOfExercisesState: number,
                                     defaultRepCountState: number,
                                     exerciseTypesState: string[], priorSessionWeightState: number[][] | undefined,
                                     priorSessionRepsState: number[][] | undefined,
                                     setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
                                     setCountState: number[],
-                                    setSetCountState: Dispatch<SetStateAction<number[]>>}){
+                                    setSetCountState: Dispatch<SetStateAction<number[]>>,
+                                    defaultWeightState: number}){
 
 
     let exercisesComponents: JSX.Element[] =
@@ -79,6 +81,7 @@ function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState
                     setCountState = {setCountState}
                     setSetCountState = {setSetCountState}
                     instance = {k}
+                    defaultWeightState = {defaultWeightState}
                 />
 
             </div>
@@ -133,7 +136,7 @@ function TypesOfExercises({exerciseTypesState}: {exerciseTypesState: string[]}){
 }
 
 function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessionRepsState,
-                         setPriorSessionRepsState, setCount, setCountState, setSetCountState, instance}:
+                         setPriorSessionRepsState, setCount, setCountState, setSetCountState, instance, defaultWeightState}:
                          {defaultRepCountState: number,
                              priorSessionWeightState: number[] | undefined,
                              priorSessionRepsState: number[] | undefined,
@@ -141,9 +144,9 @@ function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessio
                              setCount: number,
                              setCountState: number[],
                              setSetCountState: Dispatch<SetStateAction<number[]>>,
-                             instance: number}){
+                             instance: number,
+                             defaultWeightState: number}){
 
-    const [defaultWeightState, setDefaultWeightState] = useState<number>(100);
     const [intermediateRepsState, setIntermediateRepsState] = useState<number[] | undefined>(priorSessionRepsState || undefined);
 
     let maxSetCount: number[] = [];
