@@ -4,15 +4,16 @@ let cc = console.log;
 function Home(){
     //const [exercisesPresetState, setExercisesPresetState] = useState<string[]>([]);
     const [currentNumberOfExercisesState, setCurrentNumberOfExercisesState] = useState<number>(2);
-    const [exerciseTypesState, setExerciseTypesState] = useState<string[]>([]);
+    const [exerciseTypesState, setExerciseTypesState] = useState<string[]>(["Chest Press"]);
     const [defaultRepCountState, setDefaultRepCountState] = useState<number>(5);
     const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][] | undefined>(/*[[100, 200, 250], [109, 110, 111, 150]]*/);
     const [priorSessionRepsState, setPriorSessionRepsState] = useState<number[][] | undefined>(/*[[5, 2, 2, 2], [5, 7, 7, 7], [1, 1, 2]]*/);
     const [priorSessionNumberOfExercisesState, setPriorSessionNumberOfExercisesState] = useState<number | undefined>();
     const [priorSessionTitle, setPriorSessionTitle] = useState<string | undefined>();
-    const [setCountState, setSetCountState] = useState<number[]>([2, 2]);
+    const [setCountState, setSetCountState] = useState<number[]>([3, 3]);
     const [userDefinedDefaultSetsPerWorkoutState, setUserDefinedDefaultSetsPerWorkoutState] = useState<number>(2);
     const [defaultWeightState, setDefaultWeightState] = useState<number>(100);
+    const [addOrSelectExerciseState, setAddOrSelectExerciseState] = useState<number[]>([1, 0]);
 
     return(
       <div className={""}>
@@ -39,6 +40,8 @@ function Home(){
                 setCountState = {setCountState}
                 setSetCountState = {setSetCountState}
                 defaultWeightState = {defaultWeightState}
+                addOrSelectExerciseState = {addOrSelectExerciseState}
+                setAddOrSelectExerciseState = {setAddOrSelectExerciseState}
             />
         </form>
       </div>
@@ -104,7 +107,7 @@ function NumberOfExercises({currentNumberOfExercisesState, defaultRepCountState,
 
 function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState, exerciseTypesState,
                                 priorSessionWeightState, priorSessionRepsState, setPriorSessionRepsState,
-                                setCountState, setSetCountState, defaultWeightState}:
+                                setCountState, setSetCountState, defaultWeightState, addOrSelectExerciseState, setAddOrSelectExerciseState}:
                                 {currentNumberOfExercisesState: number,
                                     defaultRepCountState: number,
                                     exerciseTypesState: string[], priorSessionWeightState: number[][] | undefined,
@@ -112,7 +115,9 @@ function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState
                                     setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
                                     setCountState: number[],
                                     setSetCountState: Dispatch<SetStateAction<number[]>>,
-                                    defaultWeightState: number}){
+                                    defaultWeightState: number,
+                                    addOrSelectExerciseState: number[],
+                                    setAddOrSelectExerciseState: Dispatch<SetStateAction<number[]>>}){
 
     let priorSessionSetsSelectorsDefaultValue: number[] = [];
 
@@ -127,9 +132,12 @@ function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState
         return (
             <div key={k}>
                 <br />
-
                 <TypesOfExercises
                     exerciseTypesState = {exerciseTypesState}
+                    addOrSelectExerciseState = {addOrSelectExerciseState[k]}
+                    addOrSelectExercisesState = {addOrSelectExerciseState}
+                    setAddOrSelectExerciseState = {setAddOrSelectExerciseState}
+                    instance = {k}
                 />
 
                 <SetSelector
@@ -144,7 +152,6 @@ function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState
                     defaultWeightState = {defaultWeightState}
                     priorSessionSetsSelectorDefaultValue = {priorSessionSetsSelectorsDefaultValue[k]}
                 />
-
             </div>
         );
     });
@@ -153,7 +160,13 @@ return (<>{exercisesComponents}</>);
 
 }
 
-function TypesOfExercises({exerciseTypesState}: {exerciseTypesState: string[]}){
+function TypesOfExercises({exerciseTypesState, addOrSelectExercisesState, setAddOrSelectExerciseState, instance,
+                              addOrSelectExerciseState}:
+                              {exerciseTypesState: string[],
+                                  addOrSelectExercisesState: number[],
+                                  setAddOrSelectExerciseState: Dispatch<SetStateAction<number[]>>,
+                                  instance: number,
+                                  addOrSelectExerciseState: number}){
     let listOfExercises: JSX.Element[] = [];
     let exercisesSelector: JSX.Element[] = [];
 
@@ -165,20 +178,39 @@ function TypesOfExercises({exerciseTypesState}: {exerciseTypesState: string[]}){
         });
     }
 
-    if (listOfExercises.length > 0){
-        exercisesSelector = [0].map((e) => {
+    if (listOfExercises.length > 0 && addOrSelectExerciseState === 0){
+        exercisesSelector = [0].map((e, k) => {
             return (
-                <div>
+                <div key={k}>
                     <span className={"inputTitleSideBySide"}>Exercise  </span>
                     <select className={"genericSelectorLongSideBySide exerciseSelector"}>
                         {listOfExercises}
                     </select>
+                    <span onClick={(e) => {
+                        e.preventDefault();
+                        handleAddExercise(setAddOrSelectExerciseState, instance, true);
+                    }}> Add</span>
+                </div>
+            );
+        });
+    } else if (listOfExercises.length > 0 && addOrSelectExerciseState === 1) {
+        exercisesSelector = [0].map((e, k) => {
+            return (
+                <div key={k}>
+                    <span className={"inputTitleSideBySide"}>Exercise  </span>
+                    <input type={"text"} defaultValue={"Exercise Name"} className={`addAnExercise position[k]`}></input>
+                    <span onClick={(e) => {
+                        e.preventDefault();
+                        handleAddExercise(setAddOrSelectExerciseState, instance,false);
+                    }}> Select Instead</span>
                 </div>
             );
         });
     } else {
         return (
-            <input type={"text"} defaultValue={"Exercise Name"} className={"addAnExercise"}></input>
+            <div className={"exerciseName"}>
+                <input type={"text"} defaultValue={"Exercise Name"} className={"addAnExercise"}></input>
+            </div>
         );
     }
 
@@ -259,13 +291,13 @@ function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessio
     });
 
     return (<>
+        <br />
         <span className={"inputTitleSideBySide"}>Sets</span>
-        <select defaultValue={priorSessionSetsSelectorDefaultValue || 1} onChange={(e) => {
+        <select defaultValue={priorSessionSetsSelectorDefaultValue || 3} onChange={(e) => {
             e.preventDefault();
             if (intermediateRepsState !== undefined) {
                 handleSetPriorRepCountState(setIntermediateRepsState, +e.target.value, intermediateRepsState,
                     defaultWeightState);
-
             } else {
                 setSetCountState(prev => prev.map((num: number, index: number) => instance === index ? +e.target.value : num));
             }
@@ -298,6 +330,11 @@ function handleSetPriorRepCountState(setIntermediateRepsState: Dispatch<SetState
     }
 
     setIntermediateRepsState(newRepCounts);
+}
+
+function handleAddExercise(setAddOrSelectExerciseState: Dispatch<SetStateAction<number[]>>, instance: number, addOrRemove: boolean){
+
+    setAddOrSelectExerciseState(prev => prev.map((e, k) => k === instance ? +addOrRemove : e));
 }
 
 function RepSelector({repCountState}: {repCountState: number}){
