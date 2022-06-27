@@ -63,52 +63,8 @@ function TypesOfExercises({exerciseTypesState, addOrSelectExercisesState, setAdd
                                   setAddOrSelectExerciseState: Dispatch<SetStateAction<number[]>>,
                                   instance: number,
                                   addOrSelectExerciseState: number}){
-    let listOfExercises: JSX.Element[] = [];
-    let exercisesSelector: JSX.Element[] = [];
-
-    if (exerciseTypesState.length > 0) {
-        listOfExercises = exerciseTypesState.map((e: string, k: number) => {
-            return (
-                <option key={k}>{e}</option>
-            );
-        });
-    }
-
-    if (listOfExercises.length > 0 && addOrSelectExerciseState === 0){
-        exercisesSelector = [0].map((e, k) => {
-            return (
-                <div key={k}>
-                    <span className={"inputTitleSideBySide"}>Exercise  </span>
-                    <select className={"genericSelectorLongSideBySide exerciseSelector"}>
-                        {listOfExercises}
-                    </select>
-                    <span onClick={(e) => {
-                        e.preventDefault();
-                        handleAddExercise(setAddOrSelectExerciseState, instance, true);
-                    }}> Add</span>
-                </div>
-            );
-        });
-    } else if (listOfExercises.length > 0 && addOrSelectExerciseState === 1) {
-        exercisesSelector = [0].map((e, k) => {
-            return (
-                <div key={k}>
-                    <span className={"inputTitleSideBySide"}>Exercise  </span>
-                    <input type={"text"} defaultValue={"Exercise Name"} className={`addAnExercise position[k]`}></input>
-                    <span onClick={(e) => {
-                        e.preventDefault();
-                        handleAddExercise(setAddOrSelectExerciseState, instance,false);
-                    }}> Select Instead</span>
-                </div>
-            );
-        });
-    } else {
-        return (
-            <div className={"exerciseName"}>
-                <input type={"text"} defaultValue={"Exercise Name"} className={"addAnExercise"}></input>
-            </div>
-        );
-    }
+    let listOfExercises: JSX.Element[] | JSX.Element = getListOfExercises(exerciseTypesState);
+    let exercisesSelector: JSX.Element[] = getAddExerciseButton(listOfExercises, addOrSelectExerciseState, setAddOrSelectExerciseState, instance);
 
     return ( <>{exercisesSelector.length > 0 && exercisesSelector }</> );
 }
@@ -137,7 +93,6 @@ function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessio
     }
 
     if (intermediateRepsState !== undefined){
-
         for (let i = 0; i < intermediateRepsState.length; i++){
             numberOfCountersForThisSet[i] = i+1;
         }
@@ -156,9 +111,7 @@ function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessio
                 </div>
             );
         });
-
     } else {
-
         for (let i = 0; i < setCount; i++){
             numberOfCountersForThisSet[i] = i+1;
         }
@@ -248,6 +201,66 @@ function handleSetPriorRepCountState(setIntermediateRepsState: Dispatch<SetState
 function handleAddExercise(setAddOrSelectExerciseState: Dispatch<SetStateAction<number[]>>, instance: number, addOrRemove: boolean){
 
     setAddOrSelectExerciseState(prev => prev.map((e, k) => k === instance ? +addOrRemove : e));
+}
+
+function getAddExerciseButton(listOfExercises: JSX.Element[], addOrSelectExerciseState: number,
+                            setAddOrSelectExerciseState: Dispatch<SetStateAction<number[]>>, instance: number){
+
+    let exercisesSelector: JSX.Element[] = [];
+
+    if (listOfExercises?.length > 0 && addOrSelectExerciseState === 0){
+        exercisesSelector = [0].map((e, k) => {
+            return (
+                <div key={k}>
+                    <span className={"inputTitleSideBySide"}>Exercise  </span>
+                    <select className={"genericSelectorLongSideBySide exerciseSelector"}>
+                        {listOfExercises}
+                    </select>
+                    <span onClick={(e) => {
+                        e.preventDefault();
+                        handleAddExercise(setAddOrSelectExerciseState, instance, true);
+                    }}> Add</span>
+                </div>
+            );
+        });
+    } else if (listOfExercises?.length > 0 && addOrSelectExerciseState === 1) {
+        exercisesSelector = [0].map((e, k) => {
+            return (
+                <div key={k}>
+                    <span className={"inputTitleSideBySide"}>Exercise  </span>
+                    <input type={"text"} defaultValue={"Exercise Name"} className={`addAnExercise position[k]`}></input>
+                    <span onClick={(e) => {
+                        e.preventDefault();
+                        handleAddExercise(setAddOrSelectExerciseState, instance,false);
+                    }}> Select Instead</span>
+                </div>
+            );
+        });
+    } else {
+        exercisesSelector = [0].map((e) => {
+            return (
+                <div className={"exerciseName"}>
+                    <input type={"text"} defaultValue={"Exercise Name"} className={"addAnExercise"}></input>
+                </div>
+            );
+        })
+    }
+
+    return exercisesSelector;
+}
+
+function getListOfExercises(exerciseTypesState: string[]){
+    let listOfExercises: JSX.Element[] | JSX.Element = [];
+
+    if (exerciseTypesState.length > 0) {
+        listOfExercises = exerciseTypesState.map((e: string, k: number) => {
+            return (
+                <option key={k}>{e}</option>
+            );
+        });
+    }
+
+    return listOfExercises;
 }
 
 export default Exercises;
