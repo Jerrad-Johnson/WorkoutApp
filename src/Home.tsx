@@ -8,7 +8,7 @@ function Home(){
     const [defaultRepCountState, setDefaultRepCountState] = useState<number>(5);
     const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][] | undefined>(/*[[100, 200, 250], [109, 110, 111, 150]]*/);
     const [priorSessionRepsState, setPriorSessionRepsState] = useState<number[][] | undefined>(/*[[5, 2, 2, 2], [5, 7, 7, 7], [1, 1, 2]]*/);
-    const [priorSessionNumberOfExercisesState, setPriorSessionNumberOfExercisesState] = useState<number>(7);
+    const [priorSessionNumberOfExercisesState, setPriorSessionNumberOfExercisesState] = useState<number | undefined>();
     const [priorSessionTitle, setPriorSessionTitle] = useState<string | undefined>();
     const [setCountState, setSetCountState] = useState<number[]>([2, 2]);
     const [userDefinedDefaultSetsPerWorkoutState, setUserDefinedDefaultSetsPerWorkoutState] = useState<number>(2);
@@ -48,11 +48,15 @@ function Home(){
 function PreviousSessionSelector(){
     let listOfPreviousSessions: string[] = []; //TODO
 
-    return (<div>
-        <select>
-            {listOfPreviousSessions}
-        </select>
-    </div>);
+    if (listOfPreviousSessions.length > 0){
+        return (<div>
+            <select>
+                {listOfPreviousSessions}
+            </select>
+        </div>);
+    } else {
+        return (<></>);
+    }
 }
 
 function NewEntryTitleAndDate({priorSessionTitle}: {priorSessionTitle: string | undefined}){
@@ -75,7 +79,7 @@ function NumberOfExercises({currentNumberOfExercisesState, defaultRepCountState,
                                    setCountState: number[],
                                    setSetCountState: Dispatch<SetStateAction<number[]>>,
                                    userDefinedDefaultSetsPerWorkoutState: number,
-                                   priorSessionNumberOfExercisesState: number
+                                   priorSessionNumberOfExercisesState: number | undefined
                                }){
     let exerciseOptionCount: JSX.Element[] = Array.from({length: 12}, (_e, k) => {
         return (

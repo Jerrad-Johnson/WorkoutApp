@@ -23,7 +23,7 @@ function App() {
               <Nav />
               <Routes>
                   <Route path={""} element={<Home />} />
-                  <Route path={"Playground"} element={<Playground />} />
+                  {/*<Route path={"Playground"} element={<Playground />} />*/}
                   {/*<Route path={"Test"} element={<Test />} />*/}
               </Routes>
           </BrowserRouter>
