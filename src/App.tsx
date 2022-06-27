@@ -2,6 +2,7 @@ import './App.css';
 import Home from './Home'
 import Nav from './Nav'
 import {BrowserRouter, Route, Routes} from "react-router-dom";
+import Playground from "./Playground";
 let cc = console.log;
 
 let stuff: number[] = [5, 4, 3];
@@ -22,6 +23,7 @@ function App() {
               <Nav />
               <Routes>
                   <Route path={""} element={<Home />} />
+                  <Route path={"Playground"} element={<Playground />} />
                   {/*<Route path={"Test"} element={<Test />} />*/}
               </Routes>
           </BrowserRouter>

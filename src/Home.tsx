@@ -2,28 +2,35 @@ import {Dispatch, SetStateAction, useState} from "react";
 let cc = console.log;
 
 function Home(){
-    const [currentNumberOfExercisesState, setCurrentNumberOfExercisesState] = useState<number>(1);
     //const [priorSessionNumberOfExercisesState, setPriorSessionNumberOfExercisesState] = useState<number>(7);
+    //const [exercisesPresetState, setExercisesPresetState] = useState<string[]>([]);
+    const [currentNumberOfExercisesState, setCurrentNumberOfExercisesState] = useState<number>(1);
     const [exerciseTypesState, setExerciseTypesState] = useState<string[]>(["Please Choose"]);
-    const [exercisesPresetState, setExercisesPresetState] = useState<string[]>([]);
     const [defaultRepCountState, setDefaultRepCountState] = useState<number>(5);
-    const [serverResponseState, setServerResponseState] = useState<string>("Awaiting response...");
     const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][] | undefined>(undefined);
     const [priorSessionRepsState, setPriorSessionRepsState] = useState<number[][] | undefined>(undefined);
+    const [priorSessionTitle, setPriorSessionTitle] = useState<string | undefined>("Session Title");
+    const [setCountState, setSetCountState] = useState<number[]>([3, 4]);
+    const [userDefinedDefaultSetsPerWorkoutState, setUserDefinedDefaultSetsPerWorkoutState] = useState<number>(2);
 
 
     let date: string = todaysDateForHTMLCalendar();
 
     return(
       <div className={""}>
+        <br />
         <form>
+            <input type={"text"} defaultValue={priorSessionTitle} className={"sessionTitle"}></input>
             <span className={"inputTitle"}>New Entry Date</span>
-            <input type={"date"} defaultValue={date}></input>
+            <input type={"date"} defaultValue={date} className={"sessionDate"}></input>
 
             <NumberOfExercises
                 currentNumberOfExercisesState = {currentNumberOfExercisesState}
                 defaultRepCountState = {defaultRepCountState}
                 setCurrentNumberOfExercisesState = {setCurrentNumberOfExercisesState}
+                setCountState = {setCountState}
+                setSetCountState = {setSetCountState}
+                userDefinedDefaultSetsPerWorkoutState = {userDefinedDefaultSetsPerWorkoutState}
                 /*priorSessionNumberOfExercisesState = {priorSessionNumberOfExercisesState}*/
             />
             <ExercisesComponent
@@ -33,6 +40,8 @@ function Home(){
                 priorSessionWeightState = {priorSessionWeightState}
                 priorSessionRepsState = {priorSessionRepsState}
                 setPriorSessionRepsState = {setPriorSessionRepsState}
+                setCountState = {setCountState}
+                setSetCountState = {setSetCountState}
             />
         </form>
       </div>
@@ -40,12 +49,16 @@ function Home(){
 }
 
 function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState, exerciseTypesState,
-                                priorSessionWeightState, priorSessionRepsState, setPriorSessionRepsState}:
+                                priorSessionWeightState, priorSessionRepsState, setPriorSessionRepsState,
+                                setCountState, setSetCountState}:
                                 {currentNumberOfExercisesState: number,
                                     defaultRepCountState: number,
                                     exerciseTypesState: string[], priorSessionWeightState: number[][] | undefined,
                                     priorSessionRepsState: number[][] | undefined,
-                                    setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>}){
+                                    setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
+                                    setCountState: number[],
+                                    setSetCountState: Dispatch<SetStateAction<number[]>>}){
+
 
     let exercisesComponents: JSX.Element[] =
         Array.from({length: currentNumberOfExercisesState}, (_v, k) => {
@@ -62,6 +75,10 @@ function ExercisesComponent({currentNumberOfExercisesState, defaultRepCountState
                     priorSessionWeightState = {priorSessionWeightState?.[k]}
                     priorSessionRepsState = {priorSessionRepsState?.[k]}
                     setPriorSessionRepsState = {setPriorSessionRepsState}
+                    setCount = {setCountState[k]}
+                    setCountState = {setCountState}
+                    setSetCountState = {setSetCountState}
+                    instance = {k}
                 />
 
             </div>
@@ -73,11 +90,14 @@ return (<>{exercisesComponents}</>);
 }
 
 function NumberOfExercises({currentNumberOfExercisesState, defaultRepCountState, setCurrentNumberOfExercisesState,
-                               /*priorSessionNumberOfExercisesState*/}:
+                               setCountState, setSetCountState, userDefinedDefaultSetsPerWorkoutState}:
                            {currentNumberOfExercisesState: number,
                                defaultRepCountState: number,
                                setCurrentNumberOfExercisesState: Dispatch<SetStateAction<number>>,
-                               /*priorSessionNumberOfExercisesState: number*/}){
+                               setCountState: number[],
+                               setSetCountState: Dispatch<SetStateAction<number[]>>,
+                               userDefinedDefaultSetsPerWorkoutState: number,
+                               }){
     let exerciseOptionCount: JSX.Element[] = Array.from({length: 12}, (_e, k) => {
        return (
             <option key={k}>{k+1}</option>
@@ -89,7 +109,8 @@ function NumberOfExercises({currentNumberOfExercisesState, defaultRepCountState,
                 <select defaultValue={currentNumberOfExercisesState} className={"genericSelectorShort"} // priorSessionNumberOfExercisesState
                         onChange={(e) => {
                     e.preventDefault();
-                    setCurrentNumberOfExercisesState(+e.target.value);
+                    handleChangeNumberOfExercises(setCurrentNumberOfExercisesState, setCountState, setSetCountState,
+                        +e.target.value, userDefinedDefaultSetsPerWorkoutState);
                 }}>
                     {exerciseOptionCount}
                 </select>
@@ -111,13 +132,17 @@ function TypesOfExercises({exerciseTypesState}: {exerciseTypesState: string[]}){
         )
 }
 
-function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessionRepsState, setPriorSessionRepsState}:
+function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessionRepsState,
+                         setPriorSessionRepsState, setCount, setCountState, setSetCountState, instance}:
                          {defaultRepCountState: number,
                              priorSessionWeightState: number[] | undefined,
                              priorSessionRepsState: number[] | undefined,
-                             setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>}){
+                             setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
+                             setCount: number,
+                             setCountState: number[],
+                             setSetCountState: Dispatch<SetStateAction<number[]>>,
+                             instance: number}){
 
-    const [setCountState, setSetCountState] = useState<number>(1);
     const [defaultWeightState, setDefaultWeightState] = useState<number>(100);
     const [intermediateRepsState, setIntermediateRepsState] = useState<number[] | undefined>(priorSessionRepsState || undefined);
 
@@ -127,8 +152,6 @@ function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessio
     for (let i = 0; i < 12; i++){
         maxSetCount[i] = i+1;
     }
-
-
 
     if (intermediateRepsState !== undefined){
 
@@ -152,7 +175,7 @@ function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessio
 
     } else {
 
-        for (let i = 0; i < setCountState; i++){
+        for (let i = 0; i < setCount; i++){
             numberOfCountersForThisSet[i] = i+1;
         }
 
@@ -187,12 +210,26 @@ function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessio
                     defaultWeightState);
 
             } else {
-                setSetCountState(+e.target.value);
+                setSetCountState(prev => prev.map((num: number, index: number) => instance === index ? +e.target.value : num));
             }
         }}>{setCountOptions}
         </select>
         {repCountersForThisSet}
     </>);
+}
+
+function handleChangeNumberOfExercises(setCurrentNumberOfExercisesState: Dispatch<SetStateAction<number>>,
+                                       setCountState: number[], setSetCountState: Dispatch<SetStateAction<number[]>>,
+                                       targetValue: number, userDefinedDefaultSetsPerWorkoutState: number){
+
+    let setCountNewLength: number[] = [];
+
+    for (let i = 0; i < targetValue; i++){
+        setCountNewLength[i] = setCountState[i] || userDefinedDefaultSetsPerWorkoutState;
+    }
+
+    setSetCountState(setCountNewLength);
+    setCurrentNumberOfExercisesState(targetValue)
 }
 
 function handleSetPriorRepCountState(setIntermediateRepsState: Dispatch<SetStateAction<number[] | undefined>>,
