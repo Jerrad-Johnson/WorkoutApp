@@ -1,3 +1,4 @@
+import {submissionData} from "./interfaces";
 let cc = console.log;
 
 export function login() {
@@ -17,8 +18,8 @@ export function login() {
         .then(data => cc(data));
 }
 
-export function submitSession({serverResponseState}: {serverResponseState: string}) {
-    let entries: object[] = [{
+export function submitSession(entries: submissionData) {
+    /*let entries: object[] = [{
         "date": "2022-02-02",
         "title": "Upper Body",
         "exercise": "Chest Press",
@@ -30,7 +31,7 @@ export function submitSession({serverResponseState}: {serverResponseState: strin
         "exercise": "Bicep Curl",
         "weightLifted": [30, 30, 30],
         "reps": [5, 5, 5],
-    }];
+    }];*/
 
     fetch("http://localhost:80/php/sessionentry.php", {
         method: 'POST',

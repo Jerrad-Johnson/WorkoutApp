@@ -2,6 +2,8 @@ import {Dispatch, SetStateAction, useState} from "react";
 import Exercises from "./components/Exercises";
 import NumberOfExercises from "./components/NumberOfExercises";
 import {todaysDateForHTMLCalendar} from "./utils/collective";
+import {submitSession} from "./utils/queries";
+import {submissionData} from "./utils/interfaces";
 let cc = console.log;
 
 function Home(){
@@ -90,13 +92,6 @@ function SubmitButton(){
 
 function handleSubmit(){
 
-    interface submissionData {
-        title?: string | null;
-        date?: string | null;
-        exercises?: string[] | null[];
-        reps?: number[][] | null;
-        weights?: number[][] | null
-    }
 
     let submission: submissionData = {};
     let title: HTMLInputElement | null = document.querySelector(".sessionTitle");
@@ -105,7 +100,7 @@ function handleSubmit(){
     let groupData: NodeListOf<HTMLDivElement> | null = document.querySelectorAll('.exerciseGroupData');
     let repSelectors: Array<NodeList | undefined | null> = [];
     let repData: number[][] | undefined = [];
-    let weightSelectors: Array<NodeList | undefined[] | null> = [];
+    let weightSelectors: Array<NodeList | undefined | null> = [];
     let weightData: number[][] | undefined = [];
 
     for (let i = 0; i < groupData?.length; i++){
@@ -132,8 +127,7 @@ function handleSubmit(){
         submission.exercises[i] = exerciseNames[i].value || null;
     }
 
-    /*cc(repData)
-*/
+    submitSession(submission);
 }
 
 export default Home;
