@@ -1,6 +1,6 @@
 import {Dispatch, SetStateAction} from "react";
 import {useState} from "react";
-import {handleSetPriorRepCountState, handleAddExercise, getAddExerciseButton, getListOfExercises} from "../utils/typesOfExercises_Fns";
+import {getAddExerciseButton, getListOfExercises} from "../utils/typesOfExercises_Fns";
 import {JSX} from "cypress/react";
 import {getRepCounters, handleSetsSelectorChange} from "../utils/setSelector_Fns";
 
@@ -29,7 +29,7 @@ function Exercises({currentNumberOfExercisesState, defaultRepCountState, exercis
     let exercisesComponents: JSX.Element[] =
         Array.from({length: currentNumberOfExercisesState}, (_v, k) => {
             return (
-                <div key={k}>
+                <div key={k} className={"exerciseGroupData"}>
                     <br />
                     <TypesOfExercises
                         exerciseTypesState = {exerciseTypesState}
@@ -57,7 +57,6 @@ function Exercises({currentNumberOfExercisesState, defaultRepCountState, exercis
 
     return (<>{exercisesComponents}</>);
 }
-
 
 function TypesOfExercises({exerciseTypesState, addOrSelectExercisesState, setAddOrSelectExerciseState, instance,
                               addOrSelectExerciseState}:

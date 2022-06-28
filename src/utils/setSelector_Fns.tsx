@@ -23,7 +23,7 @@ export function getRepCounters(intermediateRepsState: number[] | undefined,
         var repCountersForThisSet = numberOfCountersForThisSet.map((e, k) => {
             return (
                 <div key={k}>
-                    <span className={"inputTitleSideBySide"}>Reps </span>
+                    <span className={"inputTitleSideBySide "}>Reps </span>
                     <RepSelector repCountState = {intermediateRepsState[k]} />
                     <br />
                     <span className={"inputTitleSideBySide"}>Weight </span>

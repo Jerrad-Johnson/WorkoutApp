@@ -26,7 +26,7 @@ export function getAddExerciseButton(listOfExercises: JSX.Element[], addOrSelect
             return (
                 <div key={k}>
                     <span className={"inputTitleSideBySide"}>Exercise  </span>
-                    <select className={"genericSelectorLongSideBySide exerciseSelector"}>
+                    <select className={`genericSelectorLongSideBySide exerciseSelector `}>
                         {listOfExercises}
                     </select>
                     <span onClick={(e) => {
@@ -41,7 +41,7 @@ export function getAddExerciseButton(listOfExercises: JSX.Element[], addOrSelect
             return (
                 <div key={k}>
                     <span className={"inputTitleSideBySide"}>Exercise  </span>
-                    <input type={"text"} defaultValue={"Exercise Name"} className={`addAnExercise position[k]`}></input>
+                    <input type={"text"} defaultValue={"Exercise Name"} className={`addAnExercise exerciseSelector`}></input>
                     <span onClick={(e) => {
                         e.preventDefault();
                         handleAddExercise(setAddOrSelectExerciseState, instance,false);
@@ -53,7 +53,7 @@ export function getAddExerciseButton(listOfExercises: JSX.Element[], addOrSelect
         exercisesSelector = [0].map((e) => {
             return (
                 <div className={"exerciseName"}>
-                    <input type={"text"} defaultValue={"Exercise Name"} className={"addAnExercise"}></input>
+                    <input type={"text"} defaultValue={"Exercise Name"} className={"addAnExercise exerciseSelector"}></input>
                 </div>
             );
         })

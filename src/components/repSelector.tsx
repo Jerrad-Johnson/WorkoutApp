@@ -15,7 +15,7 @@ export function RepSelector({repCountState}: {repCountState: number}){
 
     return (
         <select defaultValue={repCountState} className={"genericSelectorShortSideBySide " +
-            "secondSideBySideSelector"}>
+            "secondSideBySideSelector repGroupData"}>
             {repCountOptions}
         </select>
     );

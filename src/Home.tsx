@@ -48,6 +48,7 @@ function Home(){
                 addOrSelectExerciseState = {addOrSelectExerciseState}
                 setAddOrSelectExerciseState = {setAddOrSelectExerciseState}
             />
+            <SubmitButton />
         </form>
       </div>
     );
@@ -76,6 +77,63 @@ function NewEntryTitleAndDate({priorSessionTitle}: {priorSessionTitle: string | 
             <input type={"date"} defaultValue={date} className={"sessionDate"}></input>
         </div>
     );
+}
+
+function SubmitButton(){
+    return(
+        <button onClick={(e) => {
+            e.preventDefault();
+            handleSubmit();
+        }}>Submit</button>
+    )
+}
+
+function handleSubmit(){
+
+    interface submissionData {
+        title?: string | null;
+        date?: string | null;
+        exercises?: string[] | null[];
+        reps?: number[][] | null;
+        weights?: number[][] | null
+    }
+
+    let submission: submissionData = {};
+    let title: HTMLInputElement | null = document.querySelector(".sessionTitle");
+    let date: HTMLDataElement | null = document.querySelector('.sessionDate');
+    let exerciseNames: NodeListOf<HTMLSelectElement> | null = document.querySelectorAll('.exerciseSelector');
+    let groupData: NodeListOf<HTMLDivElement> | null = document.querySelectorAll('.exerciseGroupData');
+    let repSelectors: Array<NodeList | undefined | null> = [];
+    let repData: number[][] | undefined = [];
+    let weightSelectors: Array<NodeList | undefined[] | null> = [];
+    let weightData: number[][] | undefined = [];
+
+    for (let i = 0; i < groupData?.length; i++){
+        repSelectors[i] = groupData[i].querySelectorAll(".repGroupData");
+        weightSelectors[i] = groupData[i].querySelectorAll(".weightGroupData");
+    }
+
+    for (let i = 0; i < repSelectors.length; i++) {
+        repData[i] = [];
+        weightData[i] = []; // @ts-ignore
+        for (let j = 0; j < repSelectors[i]?.length; j++) { // @ts-ignore
+            repData[i][j] = +repSelectors[i][j]?.value || undefined; // @ts-ignore
+            weightData[i][j] = +weightSelectors[i][j]?.value || undefined;
+        }
+    }
+
+    submission.title = title?.value;
+    submission.date = date?.value;
+    submission.exercises = [];
+    submission.reps = repData;
+    submission.weights = weightData;
+
+    for (let i = 0; i < exerciseNames.length; i++){
+        submission.exercises[i] = exerciseNames[i].value || null;
+    }
+
+    /*cc(repData)
+*/
 }
 
 export default Home;
