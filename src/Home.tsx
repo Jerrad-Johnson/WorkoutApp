@@ -2,15 +2,16 @@ import {Dispatch, SetStateAction, useState} from "react";
 import Exercises from "./components/Exercises";
 import NumberOfExercises from "./components/NumberOfExercises";
 import {todaysDateForHTMLCalendar} from "./utils/collective";
-import {submitSession, login, getExercises} from "./utils/queries";
-import {submissionData} from "./utils/interfaces";
+import {submitSession, login, getExercises, getRecentSessions} from "./utils/queries";
+import {submissionData, exercises} from "./utils/interfaces";
 import {isEmptyArray} from "./utils/genericFunctions";
 let cc = console.log;
+var getInitialLoadDataAttempted: boolean = false;
 
 function Home(){
     //const [exercisesPresetState, setExercisesPresetState] = useState<string[]>([]);
     const [currentNumberOfExercisesState, setCurrentNumberOfExercisesState] = useState<number>(2);
-    const [exerciseTypesState, setExerciseTypesState] = useState<string[]>([]);
+    const [exerciseTypesState, setExerciseTypesState] = useState<string[] | undefined>([]);
     const [defaultRepCountState, setDefaultRepCountState] = useState<number>(5);
     const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][] | undefined>(/*[[100, 200, 250], [109, 110, 111, 150]]*/);
     const [priorSessionRepsState, setPriorSessionRepsState] = useState<number[][] | undefined>(/*[[5, 2, 2, 2], [5, 7, 7, 7], [1, 1, 2]]*/);
@@ -21,7 +22,8 @@ function Home(){
     const [defaultWeightState, setDefaultWeightState] = useState<number>(100);
     const [addOrSelectExerciseState, setAddOrSelectExerciseState] = useState<number[]>([0, 0]);
 
-    getUserData(exerciseTypesState, setExerciseTypesState);
+    getUserData(setExerciseTypesState, setPriorSessionTitle, setPriorSessionNumberOfExercisesState,
+        setPriorSessionRepsState, setPriorSessionWeightState);
 
     return(
       <div className={""}>
@@ -42,7 +44,7 @@ function Home(){
             />
             <Exercises
                 currentNumberOfExercisesState = {currentNumberOfExercisesState}
-                defaultRepCountState = {defaultRepCountState}
+                defaultRepCountState = {defaultRepCountState} // @ts-ignore
                 exerciseTypesState = {exerciseTypesState}
                 priorSessionWeightState = {priorSessionWeightState}
                 priorSessionRepsState = {priorSessionRepsState}
@@ -132,11 +134,22 @@ function handleSubmit(){
 
 }
 
-async function getUserData(exerciseTypesState: string[] | undefined, setExerciseTypesState: Dispatch<SetStateAction<string[]>>){
-    if (isEmptyArray(exerciseTypesState)){
-        let exercises = await getExercises();
-        setExerciseTypesState(exercises.data);
+async function getUserData(setExerciseTypesState: Dispatch<SetStateAction<string[] | undefined>>,
+                           setPriorSessionTitle: Dispatch<SetStateAction<string | undefined>>,
+                           setPriorSessionNumberOfExercisesState: Dispatch<SetStateAction<number | undefined>>,
+                           setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
+                           setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>> ){
+
+    if (getInitialLoadDataAttempted === false){
+        let exerciseQueryResponse: exercises = await getExercises(); // @ts-ignore
+        let exerciseList: string[] = exerciseQueryResponse?.data;
+        setExerciseTypesState(exerciseList);
+        getInitialLoadDataAttempted = true;
+
+        let mostRecentSessions = await getRecentSessions();
     }
+
+
 }
 
 export default Home;

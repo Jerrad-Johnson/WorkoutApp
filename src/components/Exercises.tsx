@@ -10,7 +10,8 @@ function Exercises({currentNumberOfExercisesState, defaultRepCountState, exercis
                                 setCountState, setSetCountState, defaultWeightState, addOrSelectExerciseState, setAddOrSelectExerciseState}:
                                 {currentNumberOfExercisesState: number,
                                     defaultRepCountState: number,
-                                    exerciseTypesState: string[], priorSessionWeightState: number[][] | undefined,
+                                    exerciseTypesState: string[],
+                                    priorSessionWeightState: number[][] | undefined,
                                     priorSessionRepsState: number[][] | undefined,
                                     setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
                                     setCountState: number[],

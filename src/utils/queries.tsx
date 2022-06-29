@@ -45,3 +45,17 @@ export function getExercises(){
 
     return dataToBeReturned;
 }
+
+export function getRecentSessions(){
+    let dataToBeReturned = fetch("http://localhost:80/php/getrecentsessions.php", {
+        method: 'POST',
+        credentials: 'include',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => response.json())
+        .then(data => data);
+
+    return dataToBeReturned;
+}

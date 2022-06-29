@@ -5,3 +5,8 @@ export interface submissionData {
     reps?: number[][] | null;
     weights?: number[][] | null
 }
+
+export interface exercises {
+    message?: string | undefined;
+    data?: string[] | undefined;
+}
