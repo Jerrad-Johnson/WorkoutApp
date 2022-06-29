@@ -6,7 +6,7 @@ import {submitSession, login, getExercises, getRecentSessions} from "./utils/que
 import {submissionData, exercises} from "./utils/interfaces";
 import {isEmptyArray} from "./utils/genericFunctions";
 let cc = console.log;
-var getInitialLoadDataAttempted: boolean = false;
+
 
 function Home(){
     //const [exercisesPresetState, setExercisesPresetState] = useState<string[]>([]);
@@ -21,9 +21,12 @@ function Home(){
     const [userDefinedDefaultSetsPerWorkoutState, setUserDefinedDefaultSetsPerWorkoutState] = useState<number>(2);
     const [defaultWeightState, setDefaultWeightState] = useState<number>(100);
     const [addOrSelectExerciseState, setAddOrSelectExerciseState] = useState<number[]>([0, 0]);
+    const [initialLoadDataAttemptedState, setInitialLoadDataAttemptedState] = useState<boolean>(false);
+    const [initialDateLoadAttemptSucceededState, setInitialDateLoadAttemptSucceededState] = useState<boolean>(false);
 
     getUserData(setExerciseTypesState, setPriorSessionTitle, setPriorSessionNumberOfExercisesState,
-        setPriorSessionRepsState, setPriorSessionWeightState);
+        setPriorSessionRepsState, setPriorSessionWeightState, initialLoadDataAttemptedState,
+        setInitialLoadDataAttemptedState, setInitialDateLoadAttemptSucceededState);
 
     return(
       <div className={""}>
@@ -138,15 +141,21 @@ async function getUserData(setExerciseTypesState: Dispatch<SetStateAction<string
                            setPriorSessionTitle: Dispatch<SetStateAction<string | undefined>>,
                            setPriorSessionNumberOfExercisesState: Dispatch<SetStateAction<number | undefined>>,
                            setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
-                           setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>> ){
+                           setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
+                           initialLoadDataAttemptedState: boolean,
+                           setInitialLoadDataAttemptedState: Dispatch<SetStateAction<boolean>>,
+                           setInitialDateLoadAttemptSucceededState: Dispatch<SetStateAction<boolean>>){
 
-    if (getInitialLoadDataAttempted === false){
+    if (initialLoadDataAttemptedState === false){
+        setInitialLoadDataAttemptedState(true);
+
         let exerciseQueryResponse: exercises = await getExercises(); // @ts-ignore
         let exerciseList: string[] = exerciseQueryResponse?.data;
-        setExerciseTypesState(exerciseList);
-        getInitialLoadDataAttempted = true;
-
         let mostRecentSessions = await getRecentSessions();
+        cc(mostRecentSessions)
+        setExerciseTypesState(exerciseList);
+
+        setInitialDateLoadAttemptSucceededState(true);
     }
 
 
