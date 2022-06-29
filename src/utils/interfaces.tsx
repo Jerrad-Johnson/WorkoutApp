@@ -11,7 +11,12 @@ export interface exercises {
     data?: string[] | undefined;
 }
 
-export interface specificSession {
-    message?: string | undefined;
-    data?: string[] | undefined;
+export interface specificSessionInput {
+    date: string;
+    title: string;
+}
+
+export interface specificSessionOutput {
+    date: string;
+    title: string;
 }

@@ -1,4 +1,5 @@
 import {submissionData} from "./interfaces";
+import {specificSessionOutput} from "./interfaces";
 let cc = console.log;
 
 export function login() {
@@ -47,7 +48,7 @@ export function getExercises(){
 }
 
 export function getRecentSessions(){
-    let dataToBeReturned = fetch("http://localhost:80/php/getspecificsession.php", {
+    let dataToBeReturned = fetch("http://localhost:80/php/getrecentsessions.php", {
         method: 'POST',
         credentials: 'include',
         mode: 'cors',
@@ -60,6 +61,22 @@ export function getRecentSessions(){
     return dataToBeReturned;
 }
 
-export function getSpecificSession(){
+export function getSpecificSession(sessionDate: string, sessionTitle: string){
+    let titleAndDate: specificSessionOutput = {
+        title: sessionTitle,
+        date: sessionDate
+    }
 
+    let dataToBeReturned = fetch("http://localhost:80/php/getspecificsession.php", {
+        method: 'POST',
+        credentials: 'include',
+        mode: 'cors',
+        body: JSON.stringify(titleAndDate),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => response.json())
+        .then(data => data);
+
+    return dataToBeReturned;
 }

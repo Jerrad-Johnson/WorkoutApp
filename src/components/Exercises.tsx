@@ -90,6 +90,7 @@ function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessio
     const [intermediateRepsState, setIntermediateRepsState] = useState<number[] | undefined>
         (priorSessionRepsState || undefined);
 
+    cc(priorSessionRepsState)
     let repCountersForThisSet: JSX.Element[], setCountOptions: JSX.Element[];
     [repCountersForThisSet, setCountOptions] = getRepCounters(intermediateRepsState, priorSessionWeightState,
         defaultWeightState, setCount, defaultRepCountState);

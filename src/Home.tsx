@@ -3,7 +3,7 @@ import Exercises from "./components/Exercises";
 import NumberOfExercises from "./components/NumberOfExercises";
 import {todaysDateForHTMLCalendar} from "./utils/collective";
 import {submitSession, login, getExercises, getRecentSessions, getSpecificSession} from "./utils/queries";
-import {submissionData, exercises, specificSession} from "./utils/interfaces";
+import {submissionData, exercises, specificSessionInput} from "./utils/interfaces";
 import {isEmptyArray} from "./utils/genericFunctions";
 let cc = console.log;
 
@@ -29,6 +29,8 @@ function Home(){
         setPriorSessionRepsState, setPriorSessionWeightState, initialLoadDataAttemptedState,
         setInitialLoadDataAttemptedState, setInitialDateLoadAttemptSucceededState, setPriorSessionTitlesAndDatesState);
 
+    cc(priorSessionWeightState)
+
     return(
       <div className={""}>
         <br />
@@ -36,6 +38,11 @@ function Home(){
             <Options
                 initialDateLoadAttemptSucceededState = {initialDateLoadAttemptSucceededState}
                 priorSessionTitlesAndDatesState = {priorSessionTitlesAndDatesState}
+                setPriorSessionWeightState = {setPriorSessionWeightState}
+                setPriorSessionRepsState = {setPriorSessionRepsState}
+                setPriorSessionNumberOfExercisesState = {setPriorSessionNumberOfExercisesState}
+                setPriorSessionTitle = {setPriorSessionTitle}
+                setSetCountState = {setSetCountState}
 
             />
             <NewEntryTitleAndDate
@@ -70,21 +77,50 @@ function Home(){
     ); //TODO Add a Notes field, auto-increment upon last session's weights
 }
 
-function Options({initialDateLoadAttemptSucceededState, priorSessionTitlesAndDatesState}: {
+function Options({initialDateLoadAttemptSucceededState,
+                     priorSessionTitlesAndDatesState,
+                     setPriorSessionWeightState,
+                     setPriorSessionRepsState,
+                     setPriorSessionNumberOfExercisesState,
+                     setPriorSessionTitle,
+                     setSetCountState }: {
     initialDateLoadAttemptSucceededState: boolean,
-    priorSessionTitlesAndDatesState: string[]}){
+    priorSessionTitlesAndDatesState: string[],
+    setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
+    setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
+    setPriorSessionNumberOfExercisesState: Dispatch<SetStateAction<number | undefined>>,
+    setPriorSessionTitle: Dispatch<SetStateAction<string | undefined>>,
+    setSetCountState: Dispatch<SetStateAction<number[]>>
+    }){
 
     if (initialDateLoadAttemptSucceededState){
         return (
-          <PreviousSessionSelector priorSessionTitlesAndDatesState = {priorSessionTitlesAndDatesState}/>
+          <PreviousSessionSelector
+              priorSessionTitlesAndDatesState = {priorSessionTitlesAndDatesState}
+              setPriorSessionWeightState = {setPriorSessionWeightState}
+              setPriorSessionRepsState = {setPriorSessionRepsState}
+              setPriorSessionNumberOfExercisesState = {setPriorSessionNumberOfExercisesState}
+              setPriorSessionTitle = {setPriorSessionTitle}
+              setSetCountState = {setSetCountState}
+          />
         );
     } else {
         return (<></>);
     }
 }
 
-function PreviousSessionSelector({priorSessionTitlesAndDatesState}: {
-    priorSessionTitlesAndDatesState: string[] }){
+function PreviousSessionSelector({priorSessionTitlesAndDatesState,
+                                     setPriorSessionWeightState,
+                                     setPriorSessionRepsState,
+                                     setPriorSessionNumberOfExercisesState,
+                                     setPriorSessionTitle,
+                                     setSetCountState}: {
+    priorSessionTitlesAndDatesState: string[],
+    setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
+    setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
+    setPriorSessionNumberOfExercisesState: Dispatch<SetStateAction<number | undefined>>,
+    setPriorSessionTitle: Dispatch<SetStateAction<string | undefined>>,
+    setSetCountState: Dispatch<SetStateAction<number[]>> }){
 
     if (priorSessionTitlesAndDatesState?.length > 0){
         let listOfPreviousSessions = priorSessionTitlesAndDatesState?.map((e, k) => {
@@ -99,7 +135,8 @@ function PreviousSessionSelector({priorSessionTitlesAndDatesState}: {
             </select>
             <button onClick={(e) => {
                 e.preventDefault();
-                handleLoadSession();
+                handleLoadSession(setPriorSessionWeightState, setPriorSessionRepsState,
+                    setPriorSessionNumberOfExercisesState, setPriorSessionTitle, setSetCountState);
             }}>Load</button>
         </div>);
 
@@ -167,10 +204,35 @@ function handleSubmit(){
 
 }
 
-function handleLoadSession(){
+async function handleLoadSession(setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
+                                 setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
+                                 setPriorSessionNumberOfExercisesState: Dispatch<SetStateAction<number | undefined>>,
+                                 setPriorSessionTitle: Dispatch<SetStateAction<string | undefined>>,
+                                 setSetCountState: Dispatch<SetStateAction<number[]>>){
     let previousSessionSelector: HTMLSelectElement | null = document.querySelector(".previousSessionSelector");
     let previousSessionTitle: string | undefined = previousSessionSelector?.value;
-    let specificSessionData: specificSession = getSpecificSession();
+
+    if (previousSessionTitle !== undefined) {
+        let splitTitleAndDate: string | string[] = previousSessionTitle.split(" - ");
+        let sessionTitle = splitTitleAndDate[0];
+        let sessionDate = splitTitleAndDate[1];
+        let specificSessionResponse: any = await getSpecificSession(sessionDate, sessionTitle); //todo specificSession
+
+        let sessionWeights: number[][] = [];
+        let sessionReps: number[][] = [];
+        let sessionExercises: string[] = [];
+
+        for (let i = 0; i < specificSessionResponse.data.length; i++){
+            sessionWeights[i] = specificSessionResponse.data[i].weight_lifted.split(",");
+            sessionReps[i] = specificSessionResponse.data[i].reps.split(",");
+            sessionExercises[i] = specificSessionResponse.data[i].exercise;
+        }
+
+        cc(sessionWeights)
+
+//        setPriorSessionWeightState(sessionWeights);
+
+    }
 }
 
 async function getUserData(setExerciseTypesState: Dispatch<SetStateAction<string[]>>,
@@ -192,7 +254,7 @@ async function getUserData(setExerciseTypesState: Dispatch<SetStateAction<string
         let convertedDateFormat: string[] = []
 
         for (let i = 0; i < mostRecentSessions.data.length; i++){
-            convertedDateFormat[i] = mostRecentSessions.data[i].session_date.replace("-", "/");
+            convertedDateFormat[i] = mostRecentSessions.data[i].session_date.replaceAll("-", "/");
         }
 
         let listOfSessionsWithDate: string[] = [];
