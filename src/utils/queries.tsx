@@ -19,20 +19,6 @@ export function login() {
 }
 
 export function submitSession(entries: submissionData) {
-    /*let entries: object[] = [{
-        "date": "2022-02-02",
-        "title": "Upper Body",
-        "exercise": "Chest Press",
-        "weightLifted": [150, 150, 150, 150],
-        "reps": [10, 10, 10, 10],
-    }, {
-        "date": "2022-02-02",
-        "title": "Upper Body",
-        "exercise": "Bicep Curl",
-        "weightLifted": [30, 30, 30],
-        "reps": [5, 5, 5],
-    }];*/
-
     fetch("http://localhost:80/php/sessionentry.php", {
         method: 'POST',
         mode: 'cors',
@@ -42,9 +28,20 @@ export function submitSession(entries: submissionData) {
             'Content-Type': 'application/json'
         }
     }).then(response => response.json())
-        .then(data => testMe(data));
+        .then(data => cc(data));
+}
 
-function testMe(data: []) {
-        cc(data);
-    }
+
+export function getExercises(){
+    let dataToBeReturned = fetch("http://localhost:80/php/getexercises.php", {
+        method: 'POST',
+        credentials: 'include',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+        }).then(response => response.json())
+            .then(data => data);
+
+    return dataToBeReturned;
 }

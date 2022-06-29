@@ -2,14 +2,15 @@ import {Dispatch, SetStateAction, useState} from "react";
 import Exercises from "./components/Exercises";
 import NumberOfExercises from "./components/NumberOfExercises";
 import {todaysDateForHTMLCalendar} from "./utils/collective";
-import {submitSession} from "./utils/queries";
+import {submitSession, login, getExercises} from "./utils/queries";
 import {submissionData} from "./utils/interfaces";
+import {isEmptyArray} from "./utils/genericFunctions";
 let cc = console.log;
 
 function Home(){
     //const [exercisesPresetState, setExercisesPresetState] = useState<string[]>([]);
     const [currentNumberOfExercisesState, setCurrentNumberOfExercisesState] = useState<number>(2);
-    const [exerciseTypesState, setExerciseTypesState] = useState<string[]>(["Chest Press"]);
+    const [exerciseTypesState, setExerciseTypesState] = useState<string[]>([]);
     const [defaultRepCountState, setDefaultRepCountState] = useState<number>(5);
     const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][] | undefined>(/*[[100, 200, 250], [109, 110, 111, 150]]*/);
     const [priorSessionRepsState, setPriorSessionRepsState] = useState<number[][] | undefined>(/*[[5, 2, 2, 2], [5, 7, 7, 7], [1, 1, 2]]*/);
@@ -19,6 +20,8 @@ function Home(){
     const [userDefinedDefaultSetsPerWorkoutState, setUserDefinedDefaultSetsPerWorkoutState] = useState<number>(2);
     const [defaultWeightState, setDefaultWeightState] = useState<number>(100);
     const [addOrSelectExerciseState, setAddOrSelectExerciseState] = useState<number[]>([0, 0]);
+
+    getUserData(exerciseTypesState, setExerciseTypesState);
 
     return(
       <div className={""}>
@@ -91,8 +94,6 @@ function SubmitButton(){
 }
 
 function handleSubmit(){
-
-
     let submission: submissionData = {};
     let title: HTMLInputElement | null = document.querySelector(".sessionTitle");
     let date: HTMLDataElement | null = document.querySelector('.sessionDate');
@@ -128,6 +129,14 @@ function handleSubmit(){
     }
 
     submitSession(submission);
+
+}
+
+async function getUserData(exerciseTypesState: string[] | undefined, setExerciseTypesState: Dispatch<SetStateAction<string[]>>){
+    if (isEmptyArray(exerciseTypesState)){
+        let exercises = await getExercises();
+        setExerciseTypesState(exercises.data);
+    }
 }
 
 export default Home;

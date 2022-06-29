@@ -3,6 +3,7 @@ import {useState} from "react";
 import {getAddExerciseButton, getListOfExercises} from "../utils/typesOfExercises_Fns";
 import {JSX} from "cypress/react";
 import {getRepCounters, handleSetsSelectorChange} from "../utils/setSelector_Fns";
+let cc = console.log;
 
 function Exercises({currentNumberOfExercisesState, defaultRepCountState, exerciseTypesState,
                                 priorSessionWeightState, priorSessionRepsState, setPriorSessionRepsState,

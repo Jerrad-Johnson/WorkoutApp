@@ -50,9 +50,9 @@ export function getAddExerciseButton(listOfExercises: JSX.Element[], addOrSelect
             );
         });
     } else {
-        exercisesSelector = [0].map((e) => {
+        exercisesSelector = [0].map((e, k) => {
             return (
-                <div className={"exerciseName"}>
+                <div className={"exerciseName"} key={k}>
                     <input type={"text"} defaultValue={"Exercise Name"} className={"addAnExercise exerciseSelector"}></input>
                 </div>
             );
