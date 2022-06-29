@@ -3,12 +3,16 @@ import {Dispatch, SetStateAction} from "react";
 import {handleSetPriorRepCountState} from "./typesOfExercises_Fns";
 import {WeightInput} from "../components/weightInput";
 import {RepSelector} from "../components/repSelector";
+let cc = console.log;
 
 export function getRepCounters(intermediateRepsState: number[] | undefined,
                         priorSessionWeightState: number[] | undefined,
                         defaultWeightState: number,
                         setCount: number,
-                        defaultRepCountState: number){
+                        defaultRepCountState: number,
+                        setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
+                        parentInstance: number){
+
     let maxSetCount: number[] = [];
     let numberOfCountersForThisSet: number[] = [];
 
@@ -31,6 +35,9 @@ export function getRepCounters(intermediateRepsState: number[] | undefined,
                     <WeightInput
                         priorSessionWeightState = {priorSessionWeightState?.[k]}
                         defaultWeightState = {defaultWeightState}
+                        setPriorSessionWeightState = {setPriorSessionWeightState}
+                        parentInstance = {parentInstance}
+                        instance = {k}
                     />
                 </div>
             );
@@ -49,11 +56,16 @@ export function getRepCounters(intermediateRepsState: number[] | undefined,
                     <WeightInput
                         priorSessionWeightState = {priorSessionWeightState?.[k]}
                         defaultWeightState = {defaultWeightState}
+                        setPriorSessionWeightState = {setPriorSessionWeightState}
+                        parentInstance = {parentInstance}
+                        instance = {k}
                     />
                 </div>
             );
         });
     }
+
+    cc(intermediateRepsState)
 
     let setCountOptions: JSX.Element[] = maxSetCount.map((e: number, k: number ) => {
         return (

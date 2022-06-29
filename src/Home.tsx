@@ -25,14 +25,6 @@ function Home(){
     const [initialLoadDataAttemptedState, setInitialLoadDataAttemptedState] = useState<boolean>(false);
     const [initialDateLoadAttemptSucceededState, setInitialDateLoadAttemptSucceededState] = useState<boolean>(false);
 
-    /*useEffect(() => {
-        let [titleElement, exerciseElements, divElements, repElements, weightElements]/!*: [titleElement: HTMLInputElement]*!/ = getSessionDOMElements();
-        let sessionData: submissionData = getSessionFromDom();
-//@ts-ignore
-        titleElement?.setAttribute("value", "test");
-        cc(priorSessionWeightState)
-    }, [priorSessionTitle, priorSessionRepsState, priorSessionNumberOfExercisesState, priorSessionWeightState, setCountState]);*/
-
     getUserData(setExerciseTypesState, setPriorSessionTitle, setPriorSessionNumberOfExercisesState,
         setPriorSessionRepsState, setPriorSessionWeightState, initialLoadDataAttemptedState,
         setInitialLoadDataAttemptedState, setInitialDateLoadAttemptSucceededState, setPriorSessionTitlesAndDatesState);
@@ -77,6 +69,7 @@ function Home(){
                 defaultWeightState = {defaultWeightState}
                 addOrSelectExerciseState = {addOrSelectExerciseState}
                 setAddOrSelectExerciseState = {setAddOrSelectExerciseState}
+                setPriorSessionWeightState = {setPriorSessionWeightState}
             />
             <SubmitButton />
         </form>
@@ -205,8 +198,8 @@ async function handleLoadSession(setPriorSessionWeightState: Dispatch<SetStateAc
 
         for (let i = 0; i < specificSessionResponse.data.length; i++){ // @ts-ignore
             sessionWeights[i] = specificSessionResponse.data[i].weight_lifted.split(","); // @ts-ignore
-            sessionSets[i] = specificSessionResponse.data[i].reps.length;
             sessionReps[i] = specificSessionResponse.data[i].reps.split(",");
+            sessionSets[i] = sessionReps[i].length;
             sessionExercises[i] = specificSessionResponse.data[i].exercise;
         }
 

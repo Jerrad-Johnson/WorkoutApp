@@ -7,7 +7,8 @@ let cc = console.log;
 
 function Exercises({currentNumberOfExercisesState, defaultRepCountState, exerciseTypesState,
                                 priorSessionWeightState, priorSessionRepsState, setPriorSessionRepsState,
-                                setCountState, setSetCountState, defaultWeightState, addOrSelectExerciseState, setAddOrSelectExerciseState}:
+                                setCountState, setSetCountState, defaultWeightState, addOrSelectExerciseState,
+                                setAddOrSelectExerciseState, setPriorSessionWeightState}:
                                 {currentNumberOfExercisesState: number,
                                     defaultRepCountState: number,
                                     exerciseTypesState: string[],
@@ -18,7 +19,8 @@ function Exercises({currentNumberOfExercisesState, defaultRepCountState, exercis
                                     setSetCountState: Dispatch<SetStateAction<number[]>>,
                                     defaultWeightState: number,
                                     addOrSelectExerciseState: number[],
-                                    setAddOrSelectExerciseState: Dispatch<SetStateAction<number[]>>}){
+                                    setAddOrSelectExerciseState: Dispatch<SetStateAction<number[]>>,
+                                    setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>}){
 
     let priorSessionSetsSelectorsDefaultValue: number[] = [];
 
@@ -27,6 +29,7 @@ function Exercises({currentNumberOfExercisesState, defaultRepCountState, exercis
             priorSessionSetsSelectorsDefaultValue[i] = priorSessionRepsState[i].length || 2;
         }
     }
+
 
     let exercisesComponents: JSX.Element[] =
         Array.from({length: currentNumberOfExercisesState}, (_v, k) => {
@@ -52,6 +55,8 @@ function Exercises({currentNumberOfExercisesState, defaultRepCountState, exercis
                         instance = {k}
                         defaultWeightState = {defaultWeightState}
                         priorSessionSetsSelectorDefaultValue = {priorSessionSetsSelectorsDefaultValue[k]}
+                        setPriorSessionWeightState = {setPriorSessionWeightState}
+                        parentInstance = {k}
                     />
                 </div>
             );
@@ -75,7 +80,7 @@ function TypesOfExercises({exerciseTypesState, addOrSelectExercisesState, setAdd
 
 function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessionRepsState,
                          setPriorSessionRepsState, setCount, setCountState, setSetCountState, instance, defaultWeightState,
-                         priorSessionSetsSelectorDefaultValue}:
+                         priorSessionSetsSelectorDefaultValue, setPriorSessionWeightState, parentInstance}:
                          {defaultRepCountState: number,
                              priorSessionWeightState: number[] | undefined,
                              priorSessionRepsState: number[] | undefined,
@@ -85,14 +90,19 @@ function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessio
                              setSetCountState: Dispatch<SetStateAction<number[]>>,
                              instance: number,
                              defaultWeightState: number,
-                             priorSessionSetsSelectorDefaultValue: number}){
+                             priorSessionSetsSelectorDefaultValue: number,
+                             setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
+                             parentInstance: number}){
 
     const [intermediateRepsState, setIntermediateRepsState] = useState<number[] | undefined>
         (priorSessionRepsState || undefined);
 
+    //cc(setCount)
+
     let repCountersForThisSet: JSX.Element[], setCountOptions: JSX.Element[];
     [repCountersForThisSet, setCountOptions] = getRepCounters(intermediateRepsState, priorSessionWeightState,
-        defaultWeightState, setCount, defaultRepCountState);
+        defaultWeightState, setCount, defaultRepCountState, setPriorSessionWeightState, parentInstance);
+
 
     return (<>
         <br />
