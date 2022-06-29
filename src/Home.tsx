@@ -13,7 +13,7 @@ function Home(){
     const [currentNumberOfExercisesState, setCurrentNumberOfExercisesState] = useState<number>(2);
     const [exerciseTypesState, setExerciseTypesState] = useState<string[]>([]);
     const [defaultRepCountState, setDefaultRepCountState] = useState<number>(5);
-    const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][] | undefined>(/*[[100, 200, 250], [109, 110, 111, 150]]*/);
+    const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][] | undefined>([[100, 200, 250], [109, 110, 111, 150]]);
     const [priorSessionRepsState, setPriorSessionRepsState] = useState<number[][] | undefined>(/*[[5, 2, 2, 2], [5, 7, 7, 7], [1, 1, 2]]*/);
     const [priorSessionNumberOfExercisesState, setPriorSessionNumberOfExercisesState] = useState<number | undefined>();
     const [priorSessionTitle, setPriorSessionTitle] = useState<string | undefined>();
@@ -29,7 +29,7 @@ function Home(){
         setPriorSessionRepsState, setPriorSessionWeightState, initialLoadDataAttemptedState,
         setInitialLoadDataAttemptedState, setInitialDateLoadAttemptSucceededState, setPriorSessionTitlesAndDatesState);
 
-    cc(priorSessionWeightState)
+    cc(setCountState)
 
     return(
       <div className={""}>
@@ -43,6 +43,7 @@ function Home(){
                 setPriorSessionNumberOfExercisesState = {setPriorSessionNumberOfExercisesState}
                 setPriorSessionTitle = {setPriorSessionTitle}
                 setSetCountState = {setSetCountState}
+                setCurrentNumberOfExercisesState = {setCurrentNumberOfExercisesState}
 
             />
             <NewEntryTitleAndDate
@@ -83,14 +84,16 @@ function Options({initialDateLoadAttemptSucceededState,
                      setPriorSessionRepsState,
                      setPriorSessionNumberOfExercisesState,
                      setPriorSessionTitle,
-                     setSetCountState }: {
+                     setSetCountState,
+                     setCurrentNumberOfExercisesState}: {
     initialDateLoadAttemptSucceededState: boolean,
     priorSessionTitlesAndDatesState: string[],
     setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
     setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
     setPriorSessionNumberOfExercisesState: Dispatch<SetStateAction<number | undefined>>,
     setPriorSessionTitle: Dispatch<SetStateAction<string | undefined>>,
-    setSetCountState: Dispatch<SetStateAction<number[]>>
+    setSetCountState: Dispatch<SetStateAction<number[]>>,
+    setCurrentNumberOfExercisesState: Dispatch<SetStateAction<number>>
     }){
 
     if (initialDateLoadAttemptSucceededState){
@@ -102,6 +105,7 @@ function Options({initialDateLoadAttemptSucceededState,
               setPriorSessionNumberOfExercisesState = {setPriorSessionNumberOfExercisesState}
               setPriorSessionTitle = {setPriorSessionTitle}
               setSetCountState = {setSetCountState}
+              setCurrentNumberOfExercisesState = {setCurrentNumberOfExercisesState}
           />
         );
     } else {
@@ -114,13 +118,15 @@ function PreviousSessionSelector({priorSessionTitlesAndDatesState,
                                      setPriorSessionRepsState,
                                      setPriorSessionNumberOfExercisesState,
                                      setPriorSessionTitle,
-                                     setSetCountState}: {
+                                     setSetCountState,
+                                     setCurrentNumberOfExercisesState }: {
     priorSessionTitlesAndDatesState: string[],
     setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
     setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
     setPriorSessionNumberOfExercisesState: Dispatch<SetStateAction<number | undefined>>,
     setPriorSessionTitle: Dispatch<SetStateAction<string | undefined>>,
-    setSetCountState: Dispatch<SetStateAction<number[]>> }){
+    setSetCountState: Dispatch<SetStateAction<number[]>>,
+    setCurrentNumberOfExercisesState: Dispatch<SetStateAction<number>>}){
 
     if (priorSessionTitlesAndDatesState?.length > 0){
         let listOfPreviousSessions = priorSessionTitlesAndDatesState?.map((e, k) => {
@@ -136,7 +142,8 @@ function PreviousSessionSelector({priorSessionTitlesAndDatesState,
             <button onClick={(e) => {
                 e.preventDefault();
                 handleLoadSession(setPriorSessionWeightState, setPriorSessionRepsState,
-                    setPriorSessionNumberOfExercisesState, setPriorSessionTitle, setSetCountState);
+                    setPriorSessionNumberOfExercisesState, setPriorSessionTitle, setSetCountState,
+                    setCurrentNumberOfExercisesState);
             }}>Load</button>
         </div>);
 
@@ -208,7 +215,8 @@ async function handleLoadSession(setPriorSessionWeightState: Dispatch<SetStateAc
                                  setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
                                  setPriorSessionNumberOfExercisesState: Dispatch<SetStateAction<number | undefined>>,
                                  setPriorSessionTitle: Dispatch<SetStateAction<string | undefined>>,
-                                 setSetCountState: Dispatch<SetStateAction<number[]>>){
+                                 setSetCountState: Dispatch<SetStateAction<number[]>>,
+                                 setCurrentNumberOfExercisesState: Dispatch<SetStateAction<number>> ){
     let previousSessionSelector: HTMLSelectElement | null = document.querySelector(".previousSessionSelector");
     let previousSessionTitle: string | undefined = previousSessionSelector?.value;
 
@@ -221,16 +229,22 @@ async function handleLoadSession(setPriorSessionWeightState: Dispatch<SetStateAc
         let sessionWeights: number[][] = [];
         let sessionReps: number[][] = [];
         let sessionExercises: string[] = [];
+        let sessionSets: number[] = [];
 
-        for (let i = 0; i < specificSessionResponse.data.length; i++){
-            sessionWeights[i] = specificSessionResponse.data[i].weight_lifted.split(",");
+        for (let i = 0; i < specificSessionResponse.data.length; i++){ // @ts-ignore
+            sessionWeights[i] = specificSessionResponse.data[i].weight_lifted.split(","); // @ts-ignore
+            sessionSets[i] = specificSessionResponse.data.length;
             sessionReps[i] = specificSessionResponse.data[i].reps.split(",");
             sessionExercises[i] = specificSessionResponse.data[i].exercise;
         }
 
-        cc(sessionWeights)
+        cc(sessionExercises.length)
 
-//        setPriorSessionWeightState(sessionWeights);
+        setPriorSessionWeightState(sessionWeights);
+        setSetCountState(sessionSets);
+        setPriorSessionTitle(sessionTitle)
+        setPriorSessionRepsState(sessionReps);
+        setCurrentNumberOfExercisesState(sessionExercises.length);
 
     }
 }

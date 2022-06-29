@@ -8,3 +8,8 @@ export function todaysDateForHTMLCalendar(){
 
     return (`${yyyy}-${MM}-${DD}`);
 }
+
+export function handleChangeValueOnSessionLoad(e: any, newState: number | undefined){
+    e.preventDefault();
+    e.target.value = newState;
+}

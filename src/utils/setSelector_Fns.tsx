@@ -20,6 +20,7 @@ export function getRepCounters(intermediateRepsState: number[] | undefined,
         for (let i = 0; i < intermediateRepsState.length; i++){
             numberOfCountersForThisSet[i] = i+1;
         }
+        console.log(5);
         var repCountersForThisSet = numberOfCountersForThisSet.map((e, k) => {
             return (
                 <div key={k}>
