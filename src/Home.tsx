@@ -11,12 +11,13 @@ let cc = console.log;
 function Home(){
     //const [exercisesPresetState, setExercisesPresetState] = useState<string[]>([]);
     const [currentNumberOfExercisesState, setCurrentNumberOfExercisesState] = useState<number>(2);
-    const [exerciseTypesState, setExerciseTypesState] = useState<string[] | undefined>([]);
+    const [exerciseTypesState, setExerciseTypesState] = useState<string[]>([]);
     const [defaultRepCountState, setDefaultRepCountState] = useState<number>(5);
     const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][] | undefined>(/*[[100, 200, 250], [109, 110, 111, 150]]*/);
     const [priorSessionRepsState, setPriorSessionRepsState] = useState<number[][] | undefined>(/*[[5, 2, 2, 2], [5, 7, 7, 7], [1, 1, 2]]*/);
     const [priorSessionNumberOfExercisesState, setPriorSessionNumberOfExercisesState] = useState<number | undefined>();
     const [priorSessionTitle, setPriorSessionTitle] = useState<string | undefined>();
+    const [priorSessionTitlesAndDatesState, setPriorSessionTitlesAndDatesState] = useState<string[]>([]);
     const [setCountState, setSetCountState] = useState<number[]>([3, 3]);
     const [userDefinedDefaultSetsPerWorkoutState, setUserDefinedDefaultSetsPerWorkoutState] = useState<number>(2);
     const [defaultWeightState, setDefaultWeightState] = useState<number>(100);
@@ -26,14 +27,19 @@ function Home(){
 
     getUserData(setExerciseTypesState, setPriorSessionTitle, setPriorSessionNumberOfExercisesState,
         setPriorSessionRepsState, setPriorSessionWeightState, initialLoadDataAttemptedState,
-        setInitialLoadDataAttemptedState, setInitialDateLoadAttemptSucceededState);
+        setInitialLoadDataAttemptedState, setInitialDateLoadAttemptSucceededState, setPriorSessionTitlesAndDatesState);
 
     return(
       <div className={""}>
         <br />
         <form>
-            <PreviousSessionSelector />
-            <NewEntryTitleAndDate priorSessionTitle = {priorSessionTitle} />
+            <Options
+                initialDateLoadAttemptSucceededState = {initialDateLoadAttemptSucceededState}
+                priorSessionTitlesAndDatesState = {priorSessionTitlesAndDatesState}
+
+            />
+            <NewEntryTitleAndDate
+                priorSessionTitle = {priorSessionTitle} />
             <NumberOfExercises
                 currentNumberOfExercisesState = {currentNumberOfExercisesState}
                 defaultRepCountState = {defaultRepCountState}
@@ -61,18 +67,38 @@ function Home(){
             <SubmitButton />
         </form>
       </div>
-    );
+    ); //TODO Add a Notes field
 }
 
-function PreviousSessionSelector(){
-    let listOfPreviousSessions: string[] = []; //TODO
+function Options({initialDateLoadAttemptSucceededState, priorSessionTitlesAndDatesState}: {
+    initialDateLoadAttemptSucceededState: boolean,
+    priorSessionTitlesAndDatesState: string[]}){
 
-    if (listOfPreviousSessions.length > 0){
+    if (initialDateLoadAttemptSucceededState){
+        return (
+          <PreviousSessionSelector priorSessionTitlesAndDatesState = {priorSessionTitlesAndDatesState}/>
+        );
+    } else {
+        return (<></>);
+    }
+}
+
+function PreviousSessionSelector({priorSessionTitlesAndDatesState}: {
+    priorSessionTitlesAndDatesState: string[] }){
+
+    if (priorSessionTitlesAndDatesState?.length > 0){
+        let listOfPreviousSessions = priorSessionTitlesAndDatesState?.map((e, k) => {
+           return (
+               <option key={k}>{e}</option>
+           );
+        });
+
         return (<div>
             <select>
                 {listOfPreviousSessions}
             </select>
         </div>);
+
     } else {
         return (<></>);
     }
@@ -137,14 +163,15 @@ function handleSubmit(){
 
 }
 
-async function getUserData(setExerciseTypesState: Dispatch<SetStateAction<string[] | undefined>>,
+async function getUserData(setExerciseTypesState: Dispatch<SetStateAction<string[]>>,
                            setPriorSessionTitle: Dispatch<SetStateAction<string | undefined>>,
                            setPriorSessionNumberOfExercisesState: Dispatch<SetStateAction<number | undefined>>,
                            setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
                            setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
                            initialLoadDataAttemptedState: boolean,
                            setInitialLoadDataAttemptedState: Dispatch<SetStateAction<boolean>>,
-                           setInitialDateLoadAttemptSucceededState: Dispatch<SetStateAction<boolean>>){
+                           setInitialDateLoadAttemptSucceededState: Dispatch<SetStateAction<boolean>>,
+                           setPriorSessionTitlesAndDatesState: Dispatch<SetStateAction<string[]>>, ){
 
     if (initialLoadDataAttemptedState === false){
         setInitialLoadDataAttemptedState(true);
@@ -152,10 +179,21 @@ async function getUserData(setExerciseTypesState: Dispatch<SetStateAction<string
         let exerciseQueryResponse: exercises = await getExercises(); // @ts-ignore
         let exerciseList: string[] = exerciseQueryResponse?.data;
         let mostRecentSessions = await getRecentSessions();
-        cc(mostRecentSessions)
-        setExerciseTypesState(exerciseList);
+        let convertedDateFormat: string[] = []
 
+        for (let i = 0; i < mostRecentSessions.data.length; i++){
+            convertedDateFormat[i] = mostRecentSessions.data[i].session_date.replace("-", "/");
+        }
+
+        let listOfSessionsWithDate: string[] = [];
+
+        for (let i = 0; i < mostRecentSessions.data.length; i++){
+            listOfSessionsWithDate[i] = mostRecentSessions.data[i].session_title + " - " + convertedDateFormat[i];
+        }
+
+        setExerciseTypesState(exerciseList);
         setInitialDateLoadAttemptSucceededState(true);
+        setPriorSessionTitlesAndDatesState(listOfSessionsWithDate)
     }
 
 
