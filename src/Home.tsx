@@ -67,7 +67,7 @@ function Home(){
             <SubmitButton />
         </form>
       </div>
-    ); //TODO Add a Notes field
+    ); //TODO Add a Notes field, auto-increment upon last session's weights
 }
 
 function Options({initialDateLoadAttemptSucceededState, priorSessionTitlesAndDatesState}: {
@@ -94,9 +94,13 @@ function PreviousSessionSelector({priorSessionTitlesAndDatesState}: {
         });
 
         return (<div>
-            <select>
+            <select className={"previousSessionSelector"}>
                 {listOfPreviousSessions}
             </select>
+            <button onClick={(e) => {
+                e.preventDefault();
+                handleLoadSession();
+            }}>Load</button>
         </div>);
 
     } else {
@@ -161,6 +165,13 @@ function handleSubmit(){
 
     submitSession(submission);
 
+}
+
+function handleLoadSession(){
+    let previousSessionSelector: HTMLSelectElement | null = document.querySelector(".previousSessionSelector");
+    let previousSessionTitle: string | undefined = previousSessionSelector?.value;
+
+    cc(previousSessionTitle)
 }
 
 async function getUserData(setExerciseTypesState: Dispatch<SetStateAction<string[]>>,
