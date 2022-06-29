@@ -233,7 +233,7 @@ async function handleLoadSession(setPriorSessionWeightState: Dispatch<SetStateAc
 
         for (let i = 0; i < specificSessionResponse.data.length; i++){ // @ts-ignore
             sessionWeights[i] = specificSessionResponse.data[i].weight_lifted.split(","); // @ts-ignore
-            sessionSets[i] = specificSessionResponse.data.length;
+            sessionSets[i] = specificSessionResponse.data[i].reps.length;
             sessionReps[i] = specificSessionResponse.data[i].reps.split(",");
             sessionExercises[i] = specificSessionResponse.data[i].exercise;
         }
@@ -245,7 +245,6 @@ async function handleLoadSession(setPriorSessionWeightState: Dispatch<SetStateAc
         setPriorSessionTitle(sessionTitle)
         setPriorSessionRepsState(sessionReps);
         setCurrentNumberOfExercisesState(sessionExercises.length);
-
     }
 }
 
