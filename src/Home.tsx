@@ -1,7 +1,7 @@
-import {Dispatch, SetStateAction, useState} from "react";
+import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import Exercises from "./components/Exercises";
 import NumberOfExercises from "./components/NumberOfExercises";
-import {todaysDateForHTMLCalendar} from "./utils/collective";
+import {todaysDateForHTMLCalendar, getSessionFromDom, getSessionDOMElements} from "./utils/collective";
 import {submitSession, login, getExercises, getRecentSessions, getSpecificSession} from "./utils/queries";
 import {submissionData, exercises, specificSessionInput} from "./utils/interfaces";
 import {isEmptyArray} from "./utils/genericFunctions";
@@ -13,7 +13,7 @@ function Home(){
     const [currentNumberOfExercisesState, setCurrentNumberOfExercisesState] = useState<number>(2);
     const [exerciseTypesState, setExerciseTypesState] = useState<string[]>([]);
     const [defaultRepCountState, setDefaultRepCountState] = useState<number>(5);
-    const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][] | undefined>([[100, 200, 250], [109, 110, 111, 150]]);
+    const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][] | undefined>(/*[[100, 200, 250], [109, 110, 111, 150]]*/);
     const [priorSessionRepsState, setPriorSessionRepsState] = useState<number[][] | undefined>(/*[[5, 2, 2, 2], [5, 7, 7, 7], [1, 1, 2]]*/);
     const [priorSessionNumberOfExercisesState, setPriorSessionNumberOfExercisesState] = useState<number | undefined>();
     const [priorSessionTitle, setPriorSessionTitle] = useState<string | undefined>();
@@ -25,11 +25,17 @@ function Home(){
     const [initialLoadDataAttemptedState, setInitialLoadDataAttemptedState] = useState<boolean>(false);
     const [initialDateLoadAttemptSucceededState, setInitialDateLoadAttemptSucceededState] = useState<boolean>(false);
 
+    /*useEffect(() => {
+        let [titleElement, exerciseElements, divElements, repElements, weightElements]/!*: [titleElement: HTMLInputElement]*!/ = getSessionDOMElements();
+        let sessionData: submissionData = getSessionFromDom();
+//@ts-ignore
+        titleElement?.setAttribute("value", "test");
+        cc(priorSessionWeightState)
+    }, [priorSessionTitle, priorSessionRepsState, priorSessionNumberOfExercisesState, priorSessionWeightState, setCountState]);*/
+
     getUserData(setExerciseTypesState, setPriorSessionTitle, setPriorSessionNumberOfExercisesState,
         setPriorSessionRepsState, setPriorSessionWeightState, initialLoadDataAttemptedState,
         setInitialLoadDataAttemptedState, setInitialDateLoadAttemptSucceededState, setPriorSessionTitlesAndDatesState);
-
-    cc(setCountState)
 
     return(
       <div className={""}>
@@ -173,42 +179,8 @@ function SubmitButton(){
 }
 
 function handleSubmit(){
-    let submission: submissionData = {};
-    let title: HTMLInputElement | null = document.querySelector(".sessionTitle");
-    let date: HTMLDataElement | null = document.querySelector('.sessionDate');
-    let exerciseNames: NodeListOf<HTMLSelectElement> | null = document.querySelectorAll('.exerciseSelector');
-    let groupData: NodeListOf<HTMLDivElement> | null = document.querySelectorAll('.exerciseGroupData');
-    let repSelectors: Array<NodeList | undefined | null> = [];
-    let repData: number[][] | undefined = [];
-    let weightSelectors: Array<NodeList | undefined | null> = [];
-    let weightData: number[][] | undefined = [];
-
-    for (let i = 0; i < groupData?.length; i++){
-        repSelectors[i] = groupData[i].querySelectorAll(".repGroupData");
-        weightSelectors[i] = groupData[i].querySelectorAll(".weightGroupData");
-    }
-
-    for (let i = 0; i < repSelectors.length; i++) {
-        repData[i] = [];
-        weightData[i] = []; // @ts-ignore
-        for (let j = 0; j < repSelectors[i]?.length; j++) { // @ts-ignore
-            repData[i][j] = +repSelectors[i][j]?.value || undefined; // @ts-ignore
-            weightData[i][j] = +weightSelectors[i][j]?.value || undefined;
-        }
-    }
-
-    submission.title = title?.value;
-    submission.date = date?.value;
-    submission.exercises = [];
-    submission.reps = repData;
-    submission.weights = weightData;
-
-    for (let i = 0; i < exerciseNames.length; i++){
-        submission.exercises[i] = exerciseNames[i].value || null;
-    }
-
+    let submission: submissionData = getSessionFromDom();
     submitSession(submission);
-
 }
 
 async function handleLoadSession(setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
@@ -224,7 +196,7 @@ async function handleLoadSession(setPriorSessionWeightState: Dispatch<SetStateAc
         let splitTitleAndDate: string | string[] = previousSessionTitle.split(" - ");
         let sessionTitle = splitTitleAndDate[0];
         let sessionDate = splitTitleAndDate[1];
-        let specificSessionResponse: any = await getSpecificSession(sessionDate, sessionTitle); //todo specificSession
+        let specificSessionResponse: any = await getSpecificSession(sessionDate, sessionTitle); //TODO update type
 
         let sessionWeights: number[][] = [];
         let sessionReps: number[][] = [];
@@ -237,8 +209,6 @@ async function handleLoadSession(setPriorSessionWeightState: Dispatch<SetStateAc
             sessionReps[i] = specificSessionResponse.data[i].reps.split(",");
             sessionExercises[i] = specificSessionResponse.data[i].exercise;
         }
-
-        cc(sessionExercises.length)
 
         setPriorSessionWeightState(sessionWeights);
         setSetCountState(sessionSets);
@@ -280,8 +250,7 @@ async function getUserData(setExerciseTypesState: Dispatch<SetStateAction<string
         setInitialDateLoadAttemptSucceededState(true);
         setPriorSessionTitlesAndDatesState(listOfSessionsWithDate)
     }
-
-
 }
+
 
 export default Home;

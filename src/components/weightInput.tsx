@@ -1,15 +1,10 @@
-import {handleChangeValueOnSessionLoad} from "../utils/collective";
-
 let cc = console.log;
 
 export function WeightInput({priorSessionWeightState, defaultWeightState}: {priorSessionWeightState: number | undefined, defaultWeightState: number}){
-
     return (<>
-        <input type={"text"} defaultValue={priorSessionWeightState || defaultWeightState} className={"weightGroupData"}
-               onChange={(e)  => {
-                   e.preventDefault();
-    cc(priorSessionWeightState)
-                   handleChangeValueOnSessionLoad.bind(e, priorSessionWeightState);
-               }} />
+        {priorSessionWeightState}
+        <input type={"text"} value={priorSessionWeightState || "5"} className={"weightGroupData"} onChange={(e) => {
+
+        }}/>
     </>)
 }
