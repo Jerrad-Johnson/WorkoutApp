@@ -10,3 +10,8 @@ export interface exercises {
     message?: string | undefined;
     data?: string[] | undefined;
 }
+
+export interface specificSession {
+    message?: string | undefined;
+    data?: string[] | undefined;
+}

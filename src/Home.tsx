@@ -2,8 +2,8 @@ import {Dispatch, SetStateAction, useState} from "react";
 import Exercises from "./components/Exercises";
 import NumberOfExercises from "./components/NumberOfExercises";
 import {todaysDateForHTMLCalendar} from "./utils/collective";
-import {submitSession, login, getExercises, getRecentSessions} from "./utils/queries";
-import {submissionData, exercises} from "./utils/interfaces";
+import {submitSession, login, getExercises, getRecentSessions, getSpecificSession} from "./utils/queries";
+import {submissionData, exercises, specificSession} from "./utils/interfaces";
 import {isEmptyArray} from "./utils/genericFunctions";
 let cc = console.log;
 
@@ -170,8 +170,7 @@ function handleSubmit(){
 function handleLoadSession(){
     let previousSessionSelector: HTMLSelectElement | null = document.querySelector(".previousSessionSelector");
     let previousSessionTitle: string | undefined = previousSessionSelector?.value;
-
-    cc(previousSessionTitle)
+    let specificSessionData: specificSession = getSpecificSession();
 }
 
 async function getUserData(setExerciseTypesState: Dispatch<SetStateAction<string[]>>,

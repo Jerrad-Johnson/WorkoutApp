@@ -47,7 +47,7 @@ export function getExercises(){
 }
 
 export function getRecentSessions(){
-    let dataToBeReturned = fetch("http://localhost:80/php/getrecentsessions.php", {
+    let dataToBeReturned = fetch("http://localhost:80/php/getspecificsession.php", {
         method: 'POST',
         credentials: 'include',
         mode: 'cors',
@@ -58,4 +58,8 @@ export function getRecentSessions(){
         .then(data => data);
 
     return dataToBeReturned;
+}
+
+export function getSpecificSession(){
+
 }
