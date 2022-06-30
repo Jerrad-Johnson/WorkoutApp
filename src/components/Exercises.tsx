@@ -8,11 +8,11 @@ let cc = console.log;
 function Exercises({currentNumberOfExercisesState, defaultRepCountState, exerciseTypesState,
                                 priorSessionWeightState, priorSessionRepsState, setPriorSessionRepsState,
                                 setCountState, setSetCountState, defaultWeightState, addOrSelectExerciseState,
-                                setAddOrSelectExerciseState, setPriorSessionWeightState}:
+                                setAddOrSelectExerciseState, setPriorSessionWeightState, originalPriorSessionWeightState}:
                                 {currentNumberOfExercisesState: number,
                                     defaultRepCountState: number,
                                     exerciseTypesState: string[],
-                                    priorSessionWeightState: number[][] | undefined,
+                                    priorSessionWeightState: number[][],
                                     priorSessionRepsState: number[][] | undefined,
                                     setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
                                     setCountState: number[],
@@ -20,7 +20,8 @@ function Exercises({currentNumberOfExercisesState, defaultRepCountState, exercis
                                     defaultWeightState: number,
                                     addOrSelectExerciseState: number[],
                                     setAddOrSelectExerciseState: Dispatch<SetStateAction<number[]>>,
-                                    setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>}){
+                                    setPriorSessionWeightState: Dispatch<SetStateAction<number[][]>>,
+                                    originalPriorSessionWeightState: number[][]}){
 
     let priorSessionSetsSelectorsDefaultValue: number[] = [];
 
@@ -57,6 +58,7 @@ function Exercises({currentNumberOfExercisesState, defaultRepCountState, exercis
                         priorSessionSetsSelectorDefaultValue = {priorSessionSetsSelectorsDefaultValue[k]}
                         setPriorSessionWeightState = {setPriorSessionWeightState}
                         parentInstance = {k}
+                        originalPriorSessionWeightState = {originalPriorSessionWeightState}
                     />
                 </div>
             );
@@ -80,9 +82,9 @@ function TypesOfExercises({exerciseTypesState, addOrSelectExercisesState, setAdd
 
 function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessionRepsState,
                          setPriorSessionRepsState, setCount, setCountState, setSetCountState, instance, defaultWeightState,
-                         priorSessionSetsSelectorDefaultValue, setPriorSessionWeightState, parentInstance}:
+                         priorSessionSetsSelectorDefaultValue, setPriorSessionWeightState, parentInstance, originalPriorSessionWeightState}:
                          {defaultRepCountState: number,
-                             priorSessionWeightState: number[] | undefined,
+                             priorSessionWeightState: number[],
                              priorSessionRepsState: number[] | undefined,
                              setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
                              setCount: number,
@@ -91,8 +93,9 @@ function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessio
                              instance: number,
                              defaultWeightState: number,
                              priorSessionSetsSelectorDefaultValue: number,
-                             setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
-                             parentInstance: number}){
+                             setPriorSessionWeightState: Dispatch<SetStateAction<number[][]>>,
+                             parentInstance: number,
+                             originalPriorSessionWeightState: number[][]}){
 
     const [intermediateRepsState, setIntermediateRepsState] = useState<number[] | undefined>
         (priorSessionRepsState || undefined);
@@ -101,7 +104,7 @@ function SetSelector({defaultRepCountState, priorSessionWeightState, priorSessio
 
     let repCountersForThisSet: JSX.Element[], setCountOptions: JSX.Element[];
     [repCountersForThisSet, setCountOptions] = getRepCounters(intermediateRepsState, priorSessionWeightState,
-        defaultWeightState, setCount, defaultRepCountState, setPriorSessionWeightState, parentInstance);
+        defaultWeightState, setCount, defaultRepCountState, setPriorSessionWeightState, parentInstance, originalPriorSessionWeightState);
 
 
     return (<>

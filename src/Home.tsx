@@ -13,7 +13,7 @@ function Home(){
     const [currentNumberOfExercisesState, setCurrentNumberOfExercisesState] = useState<number>(2);
     const [exerciseTypesState, setExerciseTypesState] = useState<string[]>([]);
     const [defaultRepCountState, setDefaultRepCountState] = useState<number>(5);
-    const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][] | undefined>(/*[[100, 200, 250], [109, 110, 111, 150]]*/);
+    const [priorSessionWeightState, setPriorSessionWeightState] = useState<number[][]>([[100, 100, 100], [100, 100, 100, 100]]);
     const [priorSessionRepsState, setPriorSessionRepsState] = useState<number[][] | undefined>(/*[[5, 2, 2, 2], [5, 7, 7, 7], [1, 1, 2]]*/);
     const [priorSessionNumberOfExercisesState, setPriorSessionNumberOfExercisesState] = useState<number | undefined>();
     const [priorSessionTitle, setPriorSessionTitle] = useState<string | undefined>();
@@ -70,6 +70,7 @@ function Home(){
                 addOrSelectExerciseState = {addOrSelectExerciseState}
                 setAddOrSelectExerciseState = {setAddOrSelectExerciseState}
                 setPriorSessionWeightState = {setPriorSessionWeightState}
+                originalPriorSessionWeightState = {priorSessionWeightState}
             />
             <SubmitButton />
         </form>
@@ -87,7 +88,7 @@ function Options({initialDateLoadAttemptSucceededState,
                      setCurrentNumberOfExercisesState}: {
     initialDateLoadAttemptSucceededState: boolean,
     priorSessionTitlesAndDatesState: string[],
-    setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
+    setPriorSessionWeightState: Dispatch<SetStateAction<number[][]>>,
     setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
     setPriorSessionNumberOfExercisesState: Dispatch<SetStateAction<number | undefined>>,
     setPriorSessionTitle: Dispatch<SetStateAction<string | undefined>>,
@@ -120,7 +121,7 @@ function PreviousSessionSelector({priorSessionTitlesAndDatesState,
                                      setSetCountState,
                                      setCurrentNumberOfExercisesState }: {
     priorSessionTitlesAndDatesState: string[],
-    setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
+    setPriorSessionWeightState: Dispatch<SetStateAction<number[][]>>,
     setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
     setPriorSessionNumberOfExercisesState: Dispatch<SetStateAction<number | undefined>>,
     setPriorSessionTitle: Dispatch<SetStateAction<string | undefined>>,
@@ -176,7 +177,7 @@ function handleSubmit(){
     submitSession(submission);
 }
 
-async function handleLoadSession(setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
+async function handleLoadSession(setPriorSessionWeightState: Dispatch<SetStateAction<number[][]>>,
                                  setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
                                  setPriorSessionNumberOfExercisesState: Dispatch<SetStateAction<number | undefined>>,
                                  setPriorSessionTitle: Dispatch<SetStateAction<string | undefined>>,
@@ -215,7 +216,7 @@ async function getUserData(setExerciseTypesState: Dispatch<SetStateAction<string
                            setPriorSessionTitle: Dispatch<SetStateAction<string | undefined>>,
                            setPriorSessionNumberOfExercisesState: Dispatch<SetStateAction<number | undefined>>,
                            setPriorSessionRepsState: Dispatch<SetStateAction<number[][] | undefined>>,
-                           setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
+                           setPriorSessionWeightState: Dispatch<SetStateAction<number[][]>>,
                            initialLoadDataAttemptedState: boolean,
                            setInitialLoadDataAttemptedState: Dispatch<SetStateAction<boolean>>,
                            setInitialDateLoadAttemptSucceededState: Dispatch<SetStateAction<boolean>>,

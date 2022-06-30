@@ -6,12 +6,13 @@ import {RepSelector} from "../components/repSelector";
 let cc = console.log;
 
 export function getRepCounters(intermediateRepsState: number[] | undefined,
-                        priorSessionWeightState: number[] | undefined,
+                        priorSessionWeightState: number[],
                         defaultWeightState: number,
                         setCount: number,
                         defaultRepCountState: number,
-                        setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
-                        parentInstance: number){
+                        setPriorSessionWeightState: Dispatch<SetStateAction<number[][]>>,
+                        parentInstance: number,
+                        originalPriorSessionWeightState: number[][] ){
 
     let maxSetCount: number[] = [];
     let numberOfCountersForThisSet: number[] = [];
@@ -24,7 +25,6 @@ export function getRepCounters(intermediateRepsState: number[] | undefined,
         for (let i = 0; i < intermediateRepsState.length; i++){
             numberOfCountersForThisSet[i] = i+1;
         }
-        console.log(5);
         var repCountersForThisSet = numberOfCountersForThisSet.map((e, k) => {
             return (
                 <div key={k}>
@@ -33,11 +33,12 @@ export function getRepCounters(intermediateRepsState: number[] | undefined,
                     <br />
                     <span className={"inputTitleSideBySide"}>Weight </span>
                     <WeightInput
-                        priorSessionWeightState = {priorSessionWeightState?.[k]}
+                        singlePriorSessionWeightState = {priorSessionWeightState?.[k]}
                         defaultWeightState = {defaultWeightState}
                         setPriorSessionWeightState = {setPriorSessionWeightState}
                         parentInstance = {parentInstance}
                         instance = {k}
+                        originalPriorSessionWeightState = {originalPriorSessionWeightState}
                     />
                 </div>
             );
@@ -54,18 +55,17 @@ export function getRepCounters(intermediateRepsState: number[] | undefined,
                     <br />
                     <span className={"inputTitleSideBySide"}>Weight </span>
                     <WeightInput
-                        priorSessionWeightState = {priorSessionWeightState?.[k]}
+                        singlePriorSessionWeightState = {priorSessionWeightState?.[k]}
                         defaultWeightState = {defaultWeightState}
                         setPriorSessionWeightState = {setPriorSessionWeightState}
                         parentInstance = {parentInstance}
                         instance = {k}
+                        originalPriorSessionWeightState = {originalPriorSessionWeightState}
                     />
                 </div>
             );
         });
     }
-
-    cc(intermediateRepsState)
 
     let setCountOptions: JSX.Element[] = maxSetCount.map((e: number, k: number ) => {
         return (

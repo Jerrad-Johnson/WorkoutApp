@@ -2,14 +2,26 @@ import {Dispatch, SetStateAction} from "react";
 
 let cc = console.log;
 
-export function WeightInput({priorSessionWeightState, defaultWeightState, setPriorSessionWeightState,
-                                parentInstance, instance}: {
-                                    priorSessionWeightState: number | undefined,
+
+export function WeightInput({singlePriorSessionWeightState, defaultWeightState, setPriorSessionWeightState,
+                                parentInstance, instance, originalPriorSessionWeightState}: {
+
+                                    singlePriorSessionWeightState: number,
                                     defaultWeightState: number,
-                                    setPriorSessionWeightState: Dispatch<SetStateAction<number[][] | undefined>>,
+                                    setPriorSessionWeightState: Dispatch<SetStateAction<number[][]>>,
                                     parentInstance: number,
-                                    instance: number }){
+                                    instance: number,
+                                    originalPriorSessionWeightState: number[][] }){
+
     return (<>
-        <input type={"text"} value={priorSessionWeightState || defaultWeightState} className={"weightGroupData"}/>
+        <input type={"number"} value={singlePriorSessionWeightState} className={"weightGroupData"}
+               onChange={(e) => {
+            //@ts-ignore
+            setPriorSessionWeightState((prev) => { //@ts-ignore
+                    prev[parentInstance][instance] = e.target.value;
+                    setPriorSessionWeightState(prev);
+            })
+            //@ts-ignore
+        }}/>
     </>)
 }
